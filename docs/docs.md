@@ -1,0 +1,7 @@
+# Docs
+
+## Installation
+
+## CLI
+
+## GUI
