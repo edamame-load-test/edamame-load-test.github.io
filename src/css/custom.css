@@ -4,11 +4,11 @@
  * work well for content-centric websites.
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Epilogue&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Arimo&display=swap');
 
 /* You can override the default Infima variables here. */
 :root {
-  --ifm-font-family-base: 'Epilogue';
+  --ifm-font-family-base: 'Arimo', sans-serif;
   --ifm-color-primary-lightest: #1a5b69;
   --ifm-color-primary-lighter: #17515d;
   --ifm-color-primary-light: #164d59;
