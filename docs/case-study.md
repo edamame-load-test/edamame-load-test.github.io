@@ -98,4 +98,46 @@ That being said, we may still want to run load tests in a production environment
 
 Therefore if there is a risk to critical parts of the production environment, safeguards need to be put in place to protect the availability of production systems when running a load test.
 
-## Background: HTTP + WS applications
+### c. Summary
+
+Depending on developer needs, load testing can take many different forms. On the most basic level, we need to consider the data being collected, the required scale of the load test, and the environment being targeted.
+
+Depending on an application's capability and complexity, more factors come into play. For example, messaging applications and collaboration tools have specific characteristics that need to be considered when determining what load testing approach should be taken.
+
+In the next section, we take a look at how collaboration apps work and how these pose specific challenges that need to be answered by an effective load testing tool.
+
+## 3. Background: Collaboration apps
+
+### a. What are collaboration apps?
+
+Collaboration apps are applications that include some kind of real-time communication aspect, such as chat or collaborative editing. For example, messaging apps like Slack, Discord, or Mattermost which allow users to connect to rooms or channels and talk to each other in real time. Collaborative editing apps, while not quite the same thing, share a number of considerations and implementation details with chat apps. These include services like Miro, Whimsical, and Coda.
+
+All of these tools benefit from [low-latency data transfer](https://ably.com/blog/what-it-takes-to-build-a-realtime-chat-or-messaging-app) (~100ms) and the ability for a server to push data directly to a client without relying on a request. To achieve these goals, many collaboration apps rely on WebSockets.
+
+**WebSocket** is a protocol that operates over HTTP and uses the underlying TCP layer to create a persistent connection between client and server. It allows for bi-directional communication between the client and server, unlike HTTP, in which a client must first initiate communication with a server by issuing a request. This persistent connection provided by WebSockets allows the server to stream events back to a client in real-time.
+
+<div class="text--center" >
+  <img src={Placeholder} alt="Example banner" width="200"/>
+  <p> 🖼️Depiction of the difference between HTTP and WS</p>
+</div>
+
+To facilitate this persistent connection under the hood, a client-side WebSocket object in the browser is required. This object uses event-based callbacks to react to messages being sent from the server. Because the client object uses an asynchronous event-based model, WebSocket messages are "fire and forget", unlike HTTP, there is no required response.
+
+To connect with clients, a separate WebSockets server must be added to the architecture. Now we have traffic existing in two separate places; the WS server and the HTTP server.
+
+<div class="text--center" >
+  <img src={Placeholder} alt="Example banner" width="200"/>
+  <p> 🖼️Depiction of more complex system including traffic split over two protocols</p>
+</div>
+
+### b. Challenges of developing a collaboration app
+
+#### i. WebSocket performance
+
+#### ii. Supporting separate protocols
+
+#### iii. "Fan out"
+
+### c. The need to load test collaboration apps
+
+## 4. 
