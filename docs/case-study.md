@@ -106,38 +106,65 @@ Depending on an application's capability and complexity, more factors come into 
 
 In the next section, we take a look at how collaboration apps work and how these pose specific challenges that need to be answered by an effective load testing tool.
 
-## 3. Background: Collaboration apps
+## 3. Background: Real-time collaboration apps
 
-### a. What are collaboration apps?
+### a. What are real-time collaboration apps?
 
-Collaboration apps are applications that include some kind of real-time communication aspect, such as chat or collaborative editing. For example, messaging apps like Slack, Discord, or Mattermost which allow users to connect to rooms or channels and talk to each other in real time. Collaborative editing apps, while not quite the same thing, share a number of considerations and implementation details with chat apps. These include services like Miro, Whimsical, and Coda.
+Collaboration apps are applications that include some kind of real-time communication aspect.
 
-All of these tools benefit from [low-latency data transfer](https://ably.com/blog/what-it-takes-to-build-a-realtime-chat-or-messaging-app) (~100ms) and the ability for a server to push data directly to a client without relying on a request. To achieve these goals, many collaboration apps rely on WebSockets.
+- **Messaging**: Slack, Discord, or Mattermost allow users to join rooms or channels and talk to each other in real-time.
+- **Whiteboarding**: Miro and Whimsical give teams a visual platform to collaborate on brainstorming aids and graphic deliverables like mind maps or flow charts.
+- **Productivity**: Coda is a versatile tool that enables teams to perform project management by collaborating on a series of documents, tables, and tasks.
 
-**WebSocket** is a protocol that operates over HTTP and uses the underlying TCP layer to create a persistent connection between client and server. It allows for bi-directional communication between the client and server, unlike HTTP, in which a client must first initiate communication with a server by issuing a request. This persistent connection provided by WebSockets allows the server to stream events back to a client in real-time.
+All of these tools benefit from [low-latency data transfer](https://ably.com/blog/what-it-takes-to-build-a-realtime-chat-or-messaging-app) (~100ms) and the ability for a server to push data directly to a client without relying on a request. To achieve these goals, the above collaboration apps rely on WebSockets.
 
 <div class="text--center" >
   <img src={Placeholder} alt="Example banner" width="200"/>
   <p> 🖼️Depiction of the difference between HTTP and WS</p>
 </div>
 
-To facilitate this persistent connection under the hood, a client-side WebSocket object in the browser is required. This object uses event-based callbacks to react to messages being sent from the server. Because the client object uses an asynchronous event-based model, WebSocket messages are "fire and forget", unlike HTTP, there is no required response.
+**WebSocket** is a protocol that operates over HTTP and uses the underlying TCP layer to create a persistent connection between client and server. It allows for bi-directional communication between the client and server, unlike HTTP, in which a client must first initiate communication with a server by issuing a request. This persistent connection provided by WebSockets allows the server to stream events back to a client in real time.
 
-To connect with clients, a separate WebSockets server must be added to the architecture. Now we have traffic existing in two separate places; the WS server and the HTTP server.
+On the client side, a WebSocket object is required in the browser to facilitate this persistent connection. The WebSocket object uses event-based callbacks to handle incoming messages from the server, and can also send messages to the server. WebSocket messages, unlike HTTP, don't require a response.
+
+On the server side, to connect with clients, a separate WebSockets server must be added to the architecture. Now we have traffic existing in two separate places; the WS server and the HTTP server.
 
 <div class="text--center" >
   <img src={Placeholder} alt="Example banner" width="200"/>
   <p> 🖼️Depiction of more complex system including traffic split over two protocols</p>
 </div>
 
-### b. Challenges of developing a collaboration app
+### b. Considerations when developing a collaboration app
 
 #### i. WebSocket performance
 
+WebSocket is an entirely different protocol from HTTP. As a result, performance is measured and tracked differently. With HTTP, we are focused on the request-response cycle, so metrics like latency for HTTP responses based on differing levels of traffic are paramount. However, for WebSockets, as no response is required, messages can be considered "fire and forget". In this case, we're more concerned about the persistent connection, for example, how many connections have been dropped vs. how many connections are currently being maintained.
+
 #### ii. Supporting separate protocols
 
-#### iii. "Fan out"
+Needing to support two entirely different protocols introduces significant complexity to the system. For example, HTTP and WebSocket servers could have different scaling needs. To determine the scalability thresholds of each, load tests would need to be run that address both traffic patterns.
 
-### c. The need to load test collaboration apps
+WebSocket clients often exhibit different behavior from those that are connected via HTTP. When an HTTP server fails, traffic can be load balanced and re-directed to a replica the next time a request is issued. However, if a WebSocket server fails, all clients are disconnected from that bi-directional communication simultaneously. Often, they all try to reconnect at the same time, which can create a "thundering herds" problem. Applications that support both HTTP and WebSockets need to be able to handle this.
 
-## 4. 
+#### iii. Fan-out messaging pattern
+
+Fan-out messaging pattern utilizes a one-to-many arrangement to emit messages, which enables a collaboration app to distribute messages to all users connected to the same channel in real-time. A message could be a literal chat message, a user's mouse movements, entering text into a shared document, drawing something on a whiteboard, or any other sort of data that needs to be propagated back up to collaborators.
+
+For the aforementioned apps, the message being published can take the form of either an HTTP request or WebSocket message from the client. To enable real-time communication, messages are sent back up to subscribed collaborators vis WebSocket. Depending on how large the channel is, one published message can lead to a sizeable fan-out.
+
+For example, if you send a message to a Slack channel with 1k subscribers, the single POST request that sends the message turns into 1k WebSocket messages being emitted.
+
+<div class="text--center" >
+  <img src={Placeholder} alt="Example banner" width="200"/>
+  <p> 🖼️Fanout</p>
+</div>
+
+### c. Summary
+
+Managing a real-time collaboration app poses a unique set of circumstances that developers must take into consideration. WebSocket servers and clients behave differently than their HTTP counterparts, and so additional scenarios like WebSocket performance, thundering herds, and messaging fan-out must be accounted for. To ensure this, developers perform load tests that accurately mimic these kinds of behaviors.
+
+## 4. Load testing collaboration apps
+
+## 5. Existing solutions
+
+## 6. Edamame architecture
