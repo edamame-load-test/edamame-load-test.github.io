@@ -224,6 +224,21 @@ Providing a way to manage load generator nodes also gives the load tester the ab
 
 ### c. Collecting and displaying data in near real-time
 
+Fast-growth companies may not have time to set up isolated staging environments to perform tests (growth could happen overnight). A load testing tool can take the dangers associated with this into consideration by providing near real-time results. If systems begin to show signs of degrading, the test can be stopped immediately.
+
+To facilitate near real-time visualization of data, the load tester requires a stream processing approach as opposed to batch processing. Batch processing presupposes the data has a defined start and finish, meaning that batch processing delivers results like end-of-test summaries. This is a time consuming approach that does not suit the time-sensitive nature of load test data for tests targeting an agnostic environment.
+
+<div class="text--center" >
+  <img src="https://hazelcast.com/wp-content/uploads/2021/12/diagram-stream-processing.png" alt="Example banner" width="400"/>
+  <p> 🖼️Graphic showing simple stream processing system</p>
+</div>
+
+Stream processing, on the other hand, assumes data is unbound and arrives continually over time. To derive analytics like percentiles from the data stream, the system splits data up into time intervals. All the data points that fit into one of these "windows" is aggregated and sent to storage. This comes with challenges of its own.
+
+More virtual users means more data. The amount of data depends on a variety of factors, including the type of load test, which load testing tool is used to conduct the test, which metrics are being collected, and how frequently they are being collected. For example, a test in which virtual users are making HTTP requests each second would result in a higher amount of data than a test in which a request is made every ten seconds. Stream processing data in vast quantities could be difficult.
+
+Finally, we need a storage method and an effective visualization tool that can show all this data in an understandable way. The visualization tool can then continually pull from storage as data is added, allowing developers to see analyzed data as the test executes.
+
 ## 5. Existing solutions
 
 ## 6. Edamame architecture
