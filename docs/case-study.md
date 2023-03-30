@@ -27,7 +27,7 @@ Overwhelming traffic is a frustrating reality for many internet users. Whether i
 Developers, to ensure their application can handle this kind of situation, re-create high-traffic scenarios by performing load tests. **Load testing** is the process of simulating user load on a system and measuring how that system responds. In a load test, a set number of programmatically generated "virtual users" are automated to interact with the system in pre-defined ways. This process helps developers identify performance bottlenecks within a system and provides assurance that the system can maintain expected standards, even under heavy strain.
 
 <div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="200"/>
+  <img src={Placeholder} alt="Example banner" width="400"/>
   <p> 🖼️Depiction of a simple load test</p>
 </div>
 
@@ -101,7 +101,7 @@ Another consideration is which environment we target in our load tests. Develope
 That being said, we may still want to run load tests in a production environment because this yields the most accurate results. Moreover, some companies (such as fast-growth startups) may not have the time or financial resources to implement a full duplicate staging environment. Finally, there might be overlapping resources between both staging and production. In this case, staging environments are not perfectly isolated, and care needs to be taken to prevent consequences to real end users.
 
 <div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="200"/>
+  <img src={Placeholder} alt="Example banner" width="400"/>
   <p> 🖼️Depiction of staging and production potentially having overlapping resources</p>
 </div>
 
@@ -128,7 +128,7 @@ Collaboration apps are applications that include some kind of real-time communic
 All of these tools benefit from [low-latency data transfer](https://ably.com/blog/what-it-takes-to-build-a-realtime-chat-or-messaging-app) (~100ms) and the ability for a server to push data directly to a client without relying on a request. To achieve these goals, the above collaboration apps rely on WebSockets.
 
 <div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="200"/>
+  <img src={Placeholder} alt="Example banner" width="400"/>
   <p> 🖼️Depiction of the difference between HTTP and WS</p>
 </div>
 
@@ -139,7 +139,7 @@ On the client side, a WebSocket object is required in the browser to facilitate 
 On the server side, to connect with clients, a separate WebSockets server must be added to the architecture. Now we have traffic existing in two separate places; the WS server and the HTTP server.
 
 <div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="200"/>
+  <img src={Placeholder} alt="Example banner" width="400"/>
   <p> 🖼️Depiction of more complex system including traffic split over two protocols</p>
 </div>
 
@@ -164,7 +164,7 @@ For the aforementioned apps, the message being published can take the form of ei
 For example, if you send a message to a Slack channel with 1k subscribers, the single POST request that sends the message turns into 1k WebSocket messages being emitted.
 
 <div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="200"/>
+  <img src={Placeholder} alt="Example banner" width="400"/>
   <p> 🖼️Fanout</p>
 </div>
 
@@ -186,7 +186,7 @@ Due to the rise of remote work, applications in this space can grow very quickly
 Typically, the HTTP server and WS server need to be tested in tandem to get an accurate picture of how the system responds to load. For applications that only support HTTP endpoints, an HTTP load tester is sufficient. However, collaboration apps cannot rely on HTTP requests alone for load testing, as client traffic is divided between two different protocols. HTTP-focused load tests do not cover all components of a collaborative application's architecture.
 
 <div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="200"/>
+  <img src={Placeholder} alt="Example banner" width="400"/>
   <p> 🖼️An image that shows how a traditional API blaster only tests part of the system / re-working of the first koi pond diagram. </p>
 </div>
 
@@ -195,7 +195,7 @@ In an HTTP load test, requests are sent to the HTTP server. This causes data to 
 Due to fan-out messaging, the number of WebSocket messages that must be sent (and therefore, the amount of load the WebSocket server must sustain) can be orders of magnitude different from the amount of HTTP requests being received. It is of vital importance that the virtual users in the load test accurately simulate the persistently connected WebSocket clients.
 
 <div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="200"/>
+  <img src={Placeholder} alt="Example banner" width="400"/>
   <p> 🖼️An image that shows how a system can be tested holistically, with persistently connected clients to show how it </p>
 </div>
 
@@ -210,7 +210,7 @@ While the actual numbers of daily active users varies from company to company, o
 Running load tests that generate 200k virtual users necessitates a distributed architecture, due to the amount of compute resources required. In most cases, this means moving to the cloud. This requires a number of different cloud-based components, meaning we need a system to manage the required infrastructure.
 
 <div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="200"/>
+  <img src={Placeholder} alt="Example banner" width="400"/>
   <p> 🖼️Visualizing why syncing nodes is important</p>
 </div>
 
@@ -240,5 +240,56 @@ More virtual users means more data. The amount of data depends on a variety of f
 Finally, we need a storage method and an effective visualization tool that can show all this data in an understandable way. The visualization tool can then continually pull from storage as data is added, allowing developers to see analyzed data as the test executes.
 
 ## 5. Existing solutions
+
+There are many existing solutions for load testing tools in general, for example, k6, Locust, JMeter, and Artillery, to name a few. While all these companies offer open-source load testers, they are typically meant for local use, meaning resources for producing high numbers of virtual users are limited to one host. However, our specifications require supporting up to 200k users per test, which necessitates a distributed architecture.
+
+It is possible to use an open source tool in a distributed manner, but it involves managing all the necessary cloud infrastructure yourself. For example, [JMeter offers a guide](https://jmeter.apache.org/usermanual/jmeter_distributed_testing_step_by_step.html) and controller construct to help users run distributed tests. If a company has very specific needs, they may even consider developing their own internal load testing tool rather than extending the capabilities of an open-source tool by distributing the test.
+
+This approach, however, involves significant complexity. Many open-source load testing tools offer a managed cloud service which abstracts away all the challenges of distribution. While this is a convenient option, it does come with limitations such as data ownership and cost.
+
+Edamame aims to bridge the gap between open-source and paid cloud services by providing a load testing tool with built-in distribution management that's simple to deploy and run.
+
+### a. DIY
+
+A number of real-world collaborative apps have taken a DIY approach to either develop a custom load testing tool or extend an existing open-source tool and manage the distribution.
+
+<div class="text--center" >
+  <img src="https://slack.engineering/wp-content/uploads/sites/7/2021/04/Screen-Shot-2021-04-21-at-4.30.30-PM.png" alt="Example banner" width="400"/>
+  <p> 🖼️Koi Pond</p>
+</div>
+
+Slack built [Koi Pond](https://slack.engineering/load-testing-with-koi-pond/), which is an internal tool that leverages a distributed Kubernetes architecture in order to ensure sufficient connected virtual users. Load is generated using a custom tool written in Go, and virtual user behavior is dictated by a JSON file. Koi Pond streams data which is displayed in a Grafana dashboard as a test runs.
+
+Miro facilitates WebSocket load testing by extending JMeter with a plugin and custom scripts. To mitigate the costs associated with running load tests on AWS, they use temporary Spot instances which are only active for the duration of the test.
+
+For developers looking to build their own custom distribution solution, [AWS](https://aws.amazon.com/solutions/implementations/distributed-load-testing-on-aws/) and [Google Cloud](https://cloud.google.com/architecture/distributed-load-testing-using-gke) both have guides on how to manage the underlying infrastructure to facilitate this.
+
+In this approach, the developer takes on all responsibility for the challenges associated with running a distributed test.
+
+### b. Cloud-based services
+
+If a developer does not wish to manage the complexity involved with a distributed load test, using a cloud-based solution abstracts away many of the challenges involved. Cloud based solutions are paid services that handle all underlying infrastructure for running tests, data collection, data processing, near real-time visualization, and data storage. This makes it very easy for developers to run large-scale load tests.
+
+That being said, cloud-based solutions also have their trade-offs. They can be very costly. Moreover, because all data storage is managed, a user does not retain control over their own data. Different cloud-based solutions will place different limits on how long data is retained.
+
+<div class="text--center" >
+  <img src="" alt="Example banner" width="400"/>
+  <p> 🖼️Chart of Cloud-based tools</p>
+</div>
+
+Another issue is cloud-based solutions are not as flexible. For example, the k6 open-source load tester is quite extensible, which allows developers to customize which metrics their load tests are tracking by default. However, the [k6 cloud platform does not support utilizing these extensions](https://k6.io/blog/extending-k6-with-xk6/), which compromises developer experience.
+
+### c. An in-between
+
+There are limited options when it comes to a distributed load testing solution that is both open-source and offers the many of the benefits a cloud-based service. [Artillery is one example of an open-source tool that allows for distributed load tests that are easy to deploy](https://www.artillery.io/docs/guides/guides/distributed-load-tests-on-aws-lambda), but it comes with significant drawbacks. Tests are run using AWS Lambda (AWS's serverless function offering), which limits them to a 15 minute duration. Distributed load tests run using Artillery also cannot be stopped mid-test.
+
+Edamame lives in the liminal space between a DIY and SaaS solution. It is open source and provides many of the benefits of a cloud-based service like managed distribution and near real-time data visualization. It also addresses the limitation of these services by giving users full control over their own data. It is built with collaboration apps in mind, and features meaningful metrics for both HTTP and WebSockets out of the box.
+
+Edamame is a specific tool built for a specific use case, so it has limitations as well. Applications that need to support levels of concurrency may not wish to utilize Edamame, as it does not support more than 200k virtual users per test. Edamame does not integrate into a CI/CD pipeline like GitHub Actions or Jenkins. Because Edamame targets collaborative apps, it does not support protocols outside HTTP and WebSockets.
+
+<div class="text--center" >
+  <img src={Placeholder} alt="Example banner" width="400"/>
+  <p>🖼️A more high-level chart that compares Edamame and existing solutions</p>
+</div>
 
 ## 6. Edamame architecture
