@@ -2,9 +2,9 @@
 
 ## 1. Abstract
 
-Edamame is a distributed load testing framework for testing messaging applications and collaboration tools that use both HTTP and WebSocket services. It is built for medium-sized companies that need to support up to 200k concurrently connected users. Edamame collects and displays client-side metrics in real-time, which provides developers deep insight into their systems. The provided ability to dynamically start and stop tests makes Edamame safe to run in either a staging or production environment.
+Edamame is a distributed load testing framework for testing messaging applications and collaboration tools that use both HTTP and WebSocket services. It is built for medium-sized companies that need to support up to 200k concurrently connected users. Edamame collects client-side metrics and displays data in near real-time, which provides developers deep insight into their systems. The ability to dynamically start and stop tests makes Edamame safe to run in either a staging or production environment.
 
-Creating a load tester with these features comes with a unique set of challenges. First, the load tester needs to test the target system with multiple protocols in tandem and ensure that the concerns of different protocols are thoroughly addressed. Second, the kind of traffic medium-sized companies need to simulate requires a distributed architecture, which adds significant complexity to the tool. Third, providing client-side metrics in real-time means systems need to be in place to collect, process, store, and visualize these metrics in a performant way.
+Creating a load tester with these features comes with a unique set of challenges. First, the load tester needs to test the target system with multiple protocols in tandem and ensure that the concerns of different protocols are thoroughly addressed. Second, the kind of traffic medium-sized companies need to simulate requires a distributed architecture, which adds significant complexity to the tool. Third, providing client-side metrics in near real-time means systems need to be in place to collect, process, store, and visualize data in a performant way.
 
 Edamame provided an open-source, easy-to-use, plug-and-play solution to the above challenges.
 
@@ -18,7 +18,7 @@ What happens when a web application gets more traffic than anticipated? Can the 
 import Placeholder from './assets/logo-light-green.png';
 
 <div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="200"/>
+  <img src="https://preview.redd.it/adi71n2nzl0a1.jpg?width=960&crop=smart&auto=webp&v=enabled&s=43a31699ab3508f3eb31d20b6bd8c32c6ecbfb41" alt="Example banner" width="400"/>
   <p> 🖼️ Tweet or screenshot of Ticketmaster going down</p>
 </div>
 
@@ -45,7 +45,7 @@ Despite the simplicity of this approach, load testing can have many levels of co
 
 The first thing we need to consider is what metrics are we collecting.
 
-Some load tests are more focused on server-side metrics, which include measurements like CPU usage and memory consumption for the target system. This informs a developer on the health of their system's server. In cases where server-side metrics are primary, these are often obtained by system monitoring tools outside the load tester's purview.
+Some load tests are more focused on server-side metrics, which include measurements like CPU usage and memory consumption for the target system. This informs a developer on the health of their system's server. In cases where server-side metrics are primary, these measurements are often obtained by system monitoring tools outside the load tester's purview.
 
 A developer also needs to understand how the end user's experience may change under heavy load, which is where client-side metrics come in. These provide important insight by measuring things like HTTP response time, which tells us the overall latency of the target system. Other important measurements include the number of failed HTTP requests. An increase in numbers for either of these could indicate that the system is starting to regress.
 
@@ -64,9 +64,18 @@ Transfer/sec:    606.33MB
 
 However, there are drawbacks associated with this approach, namely, it lacks granularity. The alternative is to plot individual data points along a time axis. This way, data is detailed enough to understand exactly when problems start to arise and we can also analyze causal relationships between different data points.
 
-Another consideration is how long the developer has to wait until they see data. A summary presupposes that there is no more data to process; the test is complete. For a short test (say 30 secs), this may not be an issue, however, load tests can be very long (say 3 hours). In this case, developers have to wait until the end of the test to view the results. Instead of waiting through the duration of the test, load testers can output granular metrics in real time.
+That being said, this approach has challenges of its own. Data generated from load testing tends to be very "noisy", that is, it lacks consistency and reliability making it difficult to discern a trend. To do so, we can perform data smoothing, which would typically involve taking some kind of average at time intervals. However, when performing load tests data points tend to differ by orders of magnitude, for example, we might see a response time of 100ms as well as 10s. Because of this disparity, taking an average skews results.
 
-Real-time data output can be very useful because it allows developers to respond to developments in test results as they occur. For example, being able to stop a test once a certain threshold is reached. However, real-time processing is an engineering challenge, and may not be worth the additional complexity involved based on developer needs.
+Instead, it's more effective to find the 50th percentile, also known as the median. If your median is 200ms, now you know that 50% of response times were less than 200ms, and 50% were more. Looking at the tail end (>90%) of percentiles allows developers to understand the experience the majority of users have. For example, if the 99th percentile of response times is 200ms, it means that 99% of users have response times equal to or less than 200ms. In the context of load testing, therefore, looking at higher percentiles (90th, 95th, 99th) tends to be more telling than the median.
+
+<div class="text--center" >
+  <img src="https://loadium.com/wp-content/uploads/2021/01/f1-1-1200x601.png" alt="Example banner" width="400"/>
+  <p> 🖼️Visualizing 99% percentiles</p>
+</div>
+
+Another consideration is how long the developer has to wait until they see data. A summary presupposes that there is no more data to process; the test is complete. For a short test (say 30 secs), this may not be an issue, however, load tests can be very long (say 3 hours). In this case, developers have to wait until the end of the test to view the results. Instead of waiting through the duration of the test, load testers can output granular data in near real time.
+
+Near real-time data output can be very useful because it allows developers to respond to developments in test results as they occur. For example, being able to stop a test once a certain threshold is reached. However, near real-time processing is an engineering challenge, and may not be worth the additional complexity involved based on developer needs.
 
 #### ii. Scale
 
@@ -79,7 +88,7 @@ There are three main limiting factors to local load testing:
 - **Network**: If the network throughput is too low, the load test may not accurately simulate the real-world conditions of user traffic, resulting in inaccurate or unreliable test results. For instance, in our example host above the network bandwidth is [up to 10GB](https://aws.amazon.com/ec2/instance-types/m5/).
 
 <div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="200"/>
+  <img src="https://k6.io/blog/static/f6d6d11d1540298928886d94d481824f/06b13/1_-_li-load-testing-overview.png" alt="Example banner" width="400"/>
   <p> 🖼️Depiction of a distributed load test</p>
 </div>
 
@@ -125,7 +134,7 @@ All of these tools benefit from [low-latency data transfer](https://ably.com/blo
 
 **WebSocket** is a protocol that operates over HTTP and uses the underlying TCP layer to create a persistent connection between client and server. It allows for bi-directional communication between the client and server, unlike HTTP, in which a client must first initiate communication with a server by issuing a request. This persistent connection provided by WebSockets allows the server to stream events back to a client in real time.
 
-On the client side, a WebSocket object is required in the browser to facilitate this persistent connection. The WebSocket object uses event-based callbacks to handle incoming messages from the server, and can also send messages to the server. WebSocket messages, unlike HTTP, don't require a response.
+On the client side, a WebSocket object is required in the browser to facilitate this persistent connection. The WebSocket object uses event-based asynchronous callbacks to handle incoming messages from the server, and can also send messages to the server. WebSocket messages, unlike HTTP, don't require a response.
 
 On the server side, to connect with clients, a separate WebSockets server must be added to the architecture. Now we have traffic existing in two separate places; the WS server and the HTTP server.
 
@@ -159,11 +168,61 @@ For example, if you send a message to a Slack channel with 1k subscribers, the s
   <p> 🖼️Fanout</p>
 </div>
 
+<!-- markdownlint-disable MD024 -->
 ### c. Summary
 
-Managing a real-time collaboration app poses a unique set of circumstances that developers must take into consideration. WebSocket servers and clients behave differently than their HTTP counterparts, and so additional scenarios like WebSocket performance, thundering herds, and messaging fan-out must be accounted for. To ensure this, developers perform load tests that accurately mimic these kinds of behaviors.
+Managing a real-time collaboration app poses a unique set of circumstances that developers must take into consideration. WebSocket servers and clients behave differently than their HTTP counterparts, and so additional scenarios like WebSocket performance, thundering herds, and fan-out messaging must be accounted for. To ensure this, developers perform load tests that accurately mimic these kinds of behaviors.
 
-## 4. Load testing collaboration apps
+## 4. Load testing for collaboration apps
+
+Due to the rise of remote work, applications in this space can grow very quickly. For example, [Miro grew from 12k to 100k concurrently connected users](https://medium.com/miro-engineering/reliable-load-testing-with-regards-to-unexpected-nuances-6f38c82196a5) in the space of a year. Fast growth requires scalability, which can compound the challenges listed above. To understand how such a system responds to stress and see if it remains operational amidst an influx of connections, load tests should have a certain set of characteristics to be effective.
+
+- It needs to ensure that all architecture components supporting both HTTP and WebSocket are sufficiently tested. This means that the virtual users should be able to mimic both an HTTP and WebSocket client.
+- It should be able to generate up to 200k virtual users per test to support the needs of medium-to-large collaboration apps.
+- It should be able to collect and display granular data pertaining to both HTTP and WebSocket concerns. To ensure the safety of target systems in an agnostic environment, this data should be emitted in near real-time.
+
+### a. Generating HTTP and WebSocket traffic
+
+Typically, the HTTP server and WS server need to be tested in tandem to get an accurate picture of how the system responds to load. For applications that only support HTTP endpoints, an HTTP load tester is sufficient. However, collaboration apps cannot rely on HTTP requests alone for load testing, as client traffic is divided between two different protocols. HTTP-focused load tests do not cover all components of a collaborative application's architecture.
+
+<div class="text--center" >
+  <img src={Placeholder} alt="Example banner" width="200"/>
+  <p> 🖼️An image that shows how a traditional API blaster only tests part of the system / re-working of the first koi pond diagram. </p>
+</div>
+
+In an HTTP load test, requests are sent to the HTTP server. This causes data to be sent to the WebSocket server in response, so that the messages received can be propagated to subscribed users. However, if the virtual users in the load test do not maintain persistent WebSocket connections, the WebSocket server never has to emit any messages (there are no active subscribers). This means that a critical part of the architecture never has to sustain any load.
+
+Due to fan-out messaging, the number of WebSocket messages that must be sent (and therefore, the amount of load the WebSocket server must sustain) can be orders of magnitude different from the amount of HTTP requests being received. It is of vital importance that the virtual users in the load test accurately simulate the persistently connected WebSocket clients.
+
+<div class="text--center" >
+  <img src={Placeholder} alt="Example banner" width="200"/>
+  <p> 🖼️An image that shows how a system can be tested holistically, with persistently connected clients to show how it </p>
+</div>
+
+This limits the choice of load testing tools to those that support both HTTP and WebSockets. The load tester should also collect meaningful metrics pertaining to both protocols, which may or may not be included.
+
+### b. Scaling to 200K concurrent users
+
+During their Series A stage, Miro grew from 12k to 100k currently connected users in the space of a year. Typically, a company in the Series A stage wants to see growth like this; their goal is to be rapidly and predictably scaling, and to ensure that their supporting infrastructure is scaling in tandem with the number of users.
+
+While the actual numbers of daily active users varies from company to company, our research shows that late stage Series A companies are typically around the 100k range. An effective load tester for a company in this phase of growth should allow tests of up to 100% this number, which we estimate to be about 200k virtual users.
+
+Running load tests that generate 200k virtual users necessitates a distributed architecture, due to the amount of compute resources required. In most cases, this means moving to the cloud. This requires a number of different cloud-based components, meaning we need a system to manage the required infrastructure.
+
+<div class="text--center" >
+  <img src={Placeholder} alt="Example banner" width="200"/>
+  <p> 🖼️Visualizing why syncing nodes is important</p>
+</div>
+
+One major concern with distributed load tests is how to synchronize the load generators. Load tests often have a predefined pattern for how the number of virtual users is ramped up and down over the duration of the test. Different patterns test how systems respond to different scenarios.
+
+For example, a load test may ramp up from zero to 100k VUs over the course of a five minute interval, and then immediately start ramping back down to zero VUs over the next five minutes. If this test is spread across five nodes, then all five nodes must start the test at exactly the same time. Otherwise, the test will never reach 100k VUs at its peak.
+
+Therefore, we need a way to synchronize load generator nodes to ensure they all start ramping up the load at the same time, and stay in line with each other to match the predefined pattern of load.
+
+Providing a way to manage load generator nodes also gives the load tester the ability to stop the test, in case critical aspects of a production environment are threatened by the additional load.
+
+### c. Collecting and displaying data in near real-time
 
 ## 5. Existing solutions
 
