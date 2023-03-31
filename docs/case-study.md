@@ -2,7 +2,7 @@
 
 ## 1. Abstract
 
-Edamame is a distributed load testing framework for testing messaging applications and collaboration tools that use both HTTP and WebSocket services. It is built for medium-sized companies that need to support up to 200k concurrently connected users. Edamame collects client-side metrics and displays data in near real-time, which provides developers deep insight into their systems. The ability to dynamically start and stop tests makes Edamame safe to run in either a staging or production environment.
+Edamame is a distributed load testing framework for testing messaging applications and collaboration tools that use both HTTP and WebSocket services. It is built for medium-sized companies that need to support up to 200k concurrently connected users. Edamame collects client-side metrics and displays data in near real-time, which provides developers with deep insight into their systems. The ability to dynamically start and stop tests makes Edamame safe to run in either a staging or production environment.
 
 Creating a load tester with these features comes with a unique set of challenges. First, the load tester needs to test the target system with multiple protocols in tandem and ensure that the concerns of different protocols are thoroughly addressed. Second, the kind of traffic medium-sized companies need to simulate requires a distributed architecture, which adds significant complexity to the tool. Third, providing client-side metrics in near real-time means systems need to be in place to collect, process, store, and visualize data in a performant way.
 
@@ -43,7 +43,7 @@ Despite the simplicity of this approach, load testing can have many levels of co
 
 #### i. Client-side metrics
 
-The first thing we need to consider is what metrics are we collecting.
+The first thing we need to consider is what metrics we are collecting.
 
 Some load tests are more focused on server-side metrics, which include measurements like CPU usage and memory consumption for the target system. This informs a developer on the health of their system's server. In cases where server-side metrics are primary, these measurements are often obtained by system monitoring tools outside the load tester's purview.
 
@@ -53,11 +53,11 @@ Next, we must determine how these measurements are analyzed. One option is to vi
 
 ```txt title="wrk summary"
 Running 30s test @ http://127.0.0.1:8080/index.html
-12 threads and 400 connections
-Thread Stats   Avg      Stdev     Max   +/- Stdev
-  Latency   635.91us    0.89ms  12.92ms   93.69%
-  Req/Sec    56.20k     8.07k   62.00k    86.54%
-22464657 requests in 30.00s, 17.76GB read
+  12 threads and 400 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   635.91us    0.89ms  12.92ms   93.69%
+    Req/Sec    56.20k     8.07k   62.00k    86.54%
+  22464657 requests in 30.00s, 17.76GB read
 Requests/sec: 748868.53
 Transfer/sec:    606.33MB
 ```
@@ -73,7 +73,7 @@ Instead, it's more effective to find the 50th percentile, also known as the medi
   <p> 🖼️Visualizing 99% percentiles</p>
 </div>
 
-Another consideration is how long the developer has to wait until they see data. A summary presupposes that there is no more data to process; the test is complete. For a short test (say 30 secs), this may not be an issue, however, load tests can be very long (say 3 hours). In this case, developers have to wait until the end of the test to view the results. Instead of waiting through the duration of the test, load testers can output granular data in near real time.
+Another consideration is how long the developer has to wait until they see data. A summary presupposes that there is no more data to process; the test is complete. For a short test (say 30 secs), this may not be an issue, however, load tests can be very long (say 3 hours). In this case, developers have to wait until the end of the test to view the results. Instead of waiting through the duration of the test, load testers can output granular data in near real-time.
 
 Near real-time data output can be very useful because it allows developers to respond to developments in test results as they occur. For example, being able to stop a test once a certain threshold is reached. However, near real-time processing is an engineering challenge, and may not be worth the additional complexity involved based on developer needs.
 
@@ -98,7 +98,7 @@ If local resources do not allow a developer to reach the desired number of virtu
 
 Another consideration is which environment we target in our load tests. Developers often use staging environments to mirror production environments. This provides a level of isolation that enables load tests to be conducted without fear of taking down any critical production services.
 
-That being said, we may still want to run load tests in a production environment because this yields the most accurate results. Moreover, some companies (such as fast-growth startups) may not have the time or financial resources to implement a full duplicate staging environment. Finally, there might be overlapping resources between both staging and production. In this case, staging environments are not perfectly isolated, and care needs to be taken to prevent consequences to real end users.
+That being said, we may still want to run load tests in a production environment because this yields the most accurate results. Moreover, some companies (such as fast-growth startups) may not have the time or financial resources to implement a full duplicate staging environment. Finally, there might be overlapping resources between both staging and production. In this case, staging environments are not perfectly isolated, and care needs to be taken to prevent consequences for real end users.
 
 <div class="text--center" >
   <img src={Placeholder} alt="Example banner" width="400"/>
@@ -121,7 +121,7 @@ In the next section, we take a look at how collaboration apps work and how these
 
 Collaboration apps are applications that include some kind of real-time communication aspect.
 
-- **Messaging**: Slack, Discord, or Mattermost allow users to join rooms or channels and talk to each other in real-time.
+- **Messaging**: Slack, Discord, or Mattermost allow users to join rooms or channels and talk to each other in real time.
 - **Whiteboarding**: Miro and Whimsical give teams a visual platform to collaborate on brainstorming aids and graphic deliverables like mind maps or flow charts.
 - **Productivity**: Coda is a versatile tool that enables teams to perform project management by collaborating on a series of documents, tables, and tasks.
 
@@ -159,7 +159,7 @@ WebSocket clients often exhibit different behavior from those that are connected
 
 Fan-out messaging pattern utilizes a one-to-many arrangement to emit messages, which enables a collaboration app to distribute messages to all users connected to the same channel in real-time. A message could be a literal chat message, a user's mouse movements, entering text into a shared document, drawing something on a whiteboard, or any other sort of data that needs to be propagated back up to collaborators.
 
-For the aforementioned apps, the message being published can take the form of either an HTTP request or WebSocket message from the client. To enable real-time communication, messages are sent back up to subscribed collaborators vis WebSocket. Depending on how large the channel is, one published message can lead to a sizeable fan-out.
+For the aforementioned apps, the message being published can take the form of either an HTTP request or WebSockets message from the client. To enable real-time communication, messages are sent back up to subscribed collaborators vis WebSockets. Depending on how large the channel is, one published message can lead to a sizeable fan-out.
 
 For example, if you send a message to a Slack channel with 1k subscribers, the single POST request that sends the message turns into 1k WebSocket messages being emitted.
 
@@ -402,13 +402,63 @@ When Edamame runs a load test, properties such as Affinity/Anti-Affinity and Tai
 
 The node group is specially configured to contain nodes that maximize efficiency of the load generators. [K6 benchmarks](https://github.com/grafana/k6-benchmarks/tree/master/results/v0.42.0) indicate that up to 60k virtual users can be supported by a single `m5.4xlarge` node. That being said, how test scripts are written can radically affect how much memory a single virtual user requires. The [official k6 recommendation](https://k6.io/docs/testing-guides/running-large-tests/) is to run no more than 30-40k virtual users per node. To be even safer, Edamame has a default value of 20k virtual users per node, but users can change this value to suit the needs of their specific tests.
 
-To further maximize compute resources, changes are made to the kernel parameters for the specialized nodes. These include `sysctl` commands like extending the range of ports that can be used for outgoing connections, which increases the maximum requests per second.
+To further maximize compute resources, changes are made to the kernel parameters for the specialized nodes. These include `sysctl` commands like extending the range of ports that can be used for outgoing connections, which increases the maximum requests per second. As making these adjustments requires low-level system access, Edamame deploys using EC2 instances with EKS rather than a serverless offering like Fargate.
 
 ### c. Collecting and displaying data in near real-time
 
-#### i. Stream processing with statsite and the StatsD protocol
+While k6 was an ideal choice for load testing tool in many ways for Edamame, it does have one significant trade off: it generates a huge amount of data. For example, running a test script with 100k virtual users, in which a VU sends an HTTP request every six seconds and a WebSocket ping every one second results in a data output consisting of about 1 million pieces of data per second.
+
+| VUs  | pieces of data output / sec |
+|------|-----------------------------|
+| 1k   | ~ 10k  |
+| 10k  | ~ 100k |
+| 100k | ~ 1 M  |
+
+This magnitude of data output makes it impractical to write data directly to a database. For example, we testing writing directly to TimescaleDB (a performant time series database) and we found it handled only about 100k writes per second. In order to avoid highly complex components such as a sharded or [distributed database](https://www.timescale.com/blog/building-a-distributed-time-series-database-on-postgresql/), Edamame implements a stream processing data pipeline.
+
+#### i. Stream processing with Statsite and the StatsD protocol
+
+To mitigate the amount of data being output, Edamame outputs load test data from generator pods using the StatsD protocol. StatsD is a lightweight, fast, text based protocol whose aim is to aggregate data efficiently in a single location. Unifying load test data in a single location on pre-determined time windows (known as "flush intervals") enables more accurate percentile aggregation before sending data to the database for storage.
+
+StatsD consists of three metric types:
+
+- **Counters** (`c`): represent values that are summed, such as the total amount of requests sent.
+- **Gauges** (`g`): represent the "latest" value, such as the number of currently connected virtual users
+- **Timers** (`ms`): track how long something takes. These values are aggregated into trends that can be broken out into percentiles, such as HTTP response time. Using StatsD enables us to specify which percentile we want to report (i.e. 50th, 95th, 99th).
+
+```statsd
+k6.http_req_failed:1|c
+k6.ws_current_connections:14.000000|g
+k6.http_req_duration:132.231000|ms
+```
+
+The StatsD output data is sent to a StatsD server. The [original StatsD server was developed by Etsy](https://www.etsy.com/codeascraft/measure-anything-measure-everything) and utilized NodeJS. It has a number of limitations, notably [it only handles an ingestion rate of 10k/sec](https://news.ycombinator.com/item?id=5958381).
+
+Statsite is a more performant StatsD server that's written in C. It uses a single core with an event loop to handle much higher numbers of data than the original StatsD server. It's also highly efficient when it comes to data aggregation. For example, counter values are aggregated as they are received. Trends are aggregated into the specified percentiles using the [Count-min sketch](https://en.wikipedia.org/wiki/Count%E2%80%93min_sketch), a probabilistic data structure that is much faster than sorting timer data points and selecting the needed percentile. Probabilistic data structures like this allow us to "calculate a good approximation of percentiles at minimal CPU and memory cost" (*Designing Data Intensive Applications* by Martin Kleppman).
+
+Another benefit to Statsite is that it supports multiple "sinks", or outputs. This makes it flexible in terms of database integration, due to the fact any executable or script can be used as a sink. Overall, using Statsite allowed Edamame to significantly minimize the amount of database writes per second. For example, if the load test tracks 20 metrics, the result is 20 writes per five-second flush interval.
+
+<div class="text--center" >
+  <img src={Placeholder} alt="Example banner" width="400"/>
+  <p>🖼️Zoomed in image of the actual data pipeline portion</p>
+</div>
+
+While k6 has an output extension that enabled us to output data using StatsD, it had some issues. Namely, gauge metrics from separate load generator pods were overwriting each other (rather than being summed), so we were not receiving accurate test data. Edamame fixes this problem by providing a custom output extension that allows for gauges from separate load generators to be aggregated accurately.
+
+This output extension is written in Go (to integrate easily with the k6 custom binary). It adds the ability to pass a namespace to gauge metrics, to ensure that data from separate pods are treated as separate measurements. To use this capability, we configured the k6 custom resource to include a namespace value as an environment variable. This allows us to "tag" and sum our gauge values in a more accurate way once they are processed.
+
+Another hurdle was the fact that Statsite does not provide an out-of-the box extension that sends metrics to Postgres (our chosen DB, see below). In order to facilitate this, Edamame includes a custom extension to Statsite written in Node. This aggregates the gauges that have been namespaced to preserve data integrity by summing them, converts data to SQL, and makes the necessary writes to store data. The writes are performed on a 5s flush interval, which we found to provide the best balance of smoothing noise and providing near real-time data analysis.
+
+One of the things that makes Statsite so efficient is that it utilizes UDP for data transport. UDP, being a connectionless protocol, provides a lower latency than transport over TCP. While this enables us to provide near real-time data, it also has its drawbacks, in that UDP lacks the reliability features of TCP. In order to ensure Statsite is reliable and keep  packet loss at a minimum, Edamame uses a node that is performance tuned to allow high UDP traffic.
+
+Finally, as the functionality of Statsite relies on aggregating data within a single location, it can represent a single point of failure for the system. By deploying Statsite on EKS, Edamame leverages Kubernetes' self-healing properties to mitigate this issue. If Statsite goes down, the Kubernetes control plane replaces it right away. When testing this eventuality, Edamame lost only a single interval of data, since Statsite was running before the next flush interval occurred. While some small amount of data might be lost, after testing it became clear that this is minimized to an acceptable range of statistical anomaly.
 
 #### ii. Storing data in PostgreSQL
+
+<div class="text--center" >
+  <img src={Placeholder} alt="Example banner" width="400"/>
+  <p>🖼️Zoomed in image of the DB with connection to EBS volume.</p>
+</div>
 
 #### iii. Visualizing results in near real-time
 
