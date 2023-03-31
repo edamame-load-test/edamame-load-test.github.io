@@ -262,9 +262,7 @@ Slack built [Koi Pond](https://slack.engineering/load-testing-with-koi-pond/), w
 
 Miro facilitates WebSocket load testing by extending JMeter with a plugin and custom scripts. To mitigate the costs associated with running load tests on AWS, they use temporary Spot instances which are only active for the duration of the test.
 
-For developers looking to build their own custom distribution solution, [AWS](https://aws.amazon.com/solutions/implementations/distributed-load-testing-on-aws/) and [Google Cloud](https://cloud.google.com/architecture/distributed-load-testing-using-gke) both have guides on how to manage the underlying infrastructure to facilitate this.
-
-In this approach, the developer takes on all responsibility for the challenges associated with running a distributed test.
+For developers looking to build their own custom distribution solution, [AWS](https://aws.amazon.com/solutions/implementations/distributed-load-testing-on-aws/) and [Google Cloud](https://cloud.google.com/architecture/distributed-load-testing-using-gke) both have guides on how to manage the underlying infrastructure to facilitate this.In this approach, the developer takes on all responsibility for the challenges associated with running a distributed test.
 
 ### b. Cloud-based services
 
@@ -273,7 +271,7 @@ If a developer does not wish to manage the complexity involved with a distribute
 That being said, cloud-based solutions also have their trade-offs. They can be very costly. Moreover, because all data storage is managed, a user does not retain control over their own data. Different cloud-based solutions will place different limits on how long data is retained.
 
 <div class="text--center" >
-  <img src="" alt="Example banner" width="400"/>
+  <img src={Placeholder} alt="Example banner" width="400"/>
   <p> 🖼️Chart of Cloud-based tools</p>
 </div>
 
@@ -285,11 +283,93 @@ There are limited options when it comes to a distributed load testing solution t
 
 Edamame lives in the liminal space between a DIY and SaaS solution. It is open source and provides many of the benefits of a cloud-based service like managed distribution and near real-time data visualization. It also addresses the limitation of these services by giving users full control over their own data. It is built with collaboration apps in mind, and features meaningful metrics for both HTTP and WebSockets out of the box.
 
-Edamame is a specific tool built for a specific use case, so it has limitations as well. Applications that need to support levels of concurrency may not wish to utilize Edamame, as it does not support more than 200k virtual users per test. Edamame does not integrate into a CI/CD pipeline like GitHub Actions or Jenkins. Because Edamame targets collaborative apps, it does not support protocols outside HTTP and WebSockets.
-
 <div class="text--center" >
   <img src={Placeholder} alt="Example banner" width="400"/>
   <p>🖼️A more high-level chart that compares Edamame and existing solutions</p>
 </div>
 
+Edamame is a specific tool built for a specific use case, so it has limitations as well. Applications that need to support levels of concurrency may not wish to utilize Edamame, as it does not support more than 200k virtual users per test. Edamame does not integrate into a CI/CD pipeline like GitHub Actions or Jenkins. Because Edamame targets collaborative apps, it does not support protocols outside HTTP and WebSockets.
+
 ## 6. Edamame architecture
+
+<div class="text--center" >
+  <img src={Placeholder} alt="Example banner" width="400"/>
+  <p>🖼️High level overview of architecture</p>
+</div>
+
+Edamame contains six main components:
+
+1. A CLI and GUI provide interfaces the user to manage load tests. They communicate with the Edamame architecture which is deployed using AWS Elastic Kubernetes Service (EKS) in the user's AWS account.
+2. The k6 operator receives test scripts from the user interface, and is responsible for initializing and synchronizing a distributed test.
+3. Load generators are pods hosted in a dedicated node group. They run the test script and simulate the virtual users needed to conduct the test.
+4. Statsite receives and aggregates data being streamed using StatsD protocol from the load generators.
+5. The PostgreSQL database stores data that is output from Statsite.
+6. Grafana pulls data from the database and displays it in near real-time using a custom dashboard specifically designed for visibility of HTTP and WebSockets metrics.
+
+## 7. Building Edamame
+
+In building Edamame our goal was to provide a tool that met all the specifications in [4. Load testing for collaboration apps](#4-load-testing-for-collaboration-apps). In brief, these were:
+
+- Generating HTTP and WebSocket traffic
+- Scaling up to 200k concurrent users
+- Collecting and displaying data in near real-time
+
+### a. Generating HTTP and WebSocket traffic
+
+#### i. Choosing a load testing tool
+
+There are many open-source tools for load testing we can build upon to ensure Edamame load tests generate both HTTP and WebSocket traffic. There are a number of factors that should be considered when selecting one, including performance, usability, and level of WebSocket support.
+
+Performance considerations include things like requests per second and memory usage. Requests per second (or RPS) measures how much traffic a load testing tool is generating. Higher RPS means a more performant load generator, as it represents CPU efficiency; a higher RPS means less CPU is utilized per request. Memory usage is also a concern when trying to determine how scalable a load testing tool is, as large numbers of virtual users can be very demanding on RAM. Because Edamame needs to support such a high number of virtual users, we need a tool that requires minimal amount of RAM per VU.
+
+Ease of use is also an important consideration. For example, how does the user define the tests themselves? Using a scriptable tool allows developers to write detailed and flexible scenarios that virtual users will perform. Depending on the tool, these can be defined via either a general purpose programming language or a DSL. Non-scriptable tools do not provide this kind of customization and flexibility, however.
+
+Finally, the level of support for WebSockets varies from tool to tool. Some tools feature native support for WebSockets, other require third party plug ins, and some do not enable virtual users that simulate WebSocket clients at all.
+
+| Tool                                | wrk      | Gatling     | Artillery   | K6          | JMeter         | Locust         |
+|-------------------------------------|----------|-------------|-------------|-------------|----------------|----------------|
+| Written in                          | C        | Scala       | NodeJS      | Go          | Java           | Python         |
+| Scriptable                          | Yes: Lua | Yes: Scala  | Yes: JS     | Yes: JS     | Limited: XML   | Yes: Python    |
+| Managed distributed load generation | No       | No          | Limited     | No          | No             | No             |
+| Max requests per second (RPS)       |    54100 |        4700 |         321 |       11300 |           7000 |           2900 |
+| Mem Usage per 1VU MB*               |     0.25 |       11.85 |        6.31 |        2.22 |          20.17 |           7.16 |
+| WS Support                          | No       | Yes: Native | Yes: Native | Yes: Native | Yes: 3rd party | Yes: 3rd party |
+
+Edamame utilizes and extends k6 for it's load testing framework. We chose k6 because it's one of the most lightweight load-testing tools in terms of how much memory is required per VU which makes it highly scalable. Furthermore, users can provide test scripts written in JavaScript, which is a well known general purpose programming language. It has native support for WebSockets, so it can be used to test both HTTP and WebSocket servers.
+
+#### ii. Providing additional WebSocket metrics
+
+While k6 provides many benefits, the default metrics for WebSockets have limitations in that they do not tell the full story of how the targeted WebSocket server is performing. For example, `ws_session_duration` is determined by the user's test script and does not have a high correlation with WebSocket server performance.
+
+<div class="text--center" >
+  <img src={Placeholder} alt="Example banner" width="400"/>
+  <p>🖼️Show where the custom extension goes and how the binary is compiled</p>
+</div>
+
+Due to the extensibility of k6, we were able to build a custom extension that tracks five additional metrics. This enables Edamame to provide better visibility into WebSocket performance.
+
+| Metric | Description |
+|--------|-------------|
+| `ws_current_connections`| The current number of active WebSocket connections. This is important because the k6 default metrics only provide the total number of connections, rather than how many connections are being persisted at any given time. |
+| `ws_failed_handshakes`| The number of WebSocket connections that could not be established. An increase of these failures could indicate performance issues with the target system.|
+| `ws_abnormal_closure_error`| The number of connections that are dropped, measured by counting the number of 1006 abnormal closure error messages.|
+| `ws_msgs_bytes_sent`| The total number of bytes sent in WebSocket messages. As the size of messages can vary widely, this provides additional context to the default k6 `ws_msgs_sent` metric.|
+| `ws_msgs_bytes_received`| The total number of bytes received in WebSocket messages.|
+
+### b. Scaling to 200K concurrent users
+
+#### i. Choosing a container orchestration tool
+
+#### ii. Load generator synchronization
+
+#### iii. Managing compute resources for load generators
+
+### c. Collecting and displaying data in near real-time
+
+#### i. Stream processing
+
+#### ii. Persisting data
+
+#### iii. Visualizing results in near real-time
+
+## 8. Future plans
