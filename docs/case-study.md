@@ -216,7 +216,7 @@ Running load tests that generate 200k virtual users necessitates a distributed a
 
 One major concern with distributed load tests is how to synchronize the load generators. Load tests often have a predefined pattern for how the number of virtual users is ramped up and down over the duration of the test. Different patterns test how systems respond to different scenarios.
 
-For example, a load test may ramp up from zero to 100k VUs over the course of a five minute interval, and then immediately start ramping back down to zero VUs over the next five minutes. If this test is spread across five nodes, then all five nodes must start the test at exactly the same time. Otherwise, the test will never reach 100k VUs at its peak.
+For example, a load test may ramp up from zero to 20k VUs over the course of a five minute interval, and then immediately start ramping back down to zero VUs over the next five minutes. If this test is spread across two nodes, then both nodes must start the test at exactly the same time. Otherwise, the test will never reach 20k VUs at its peak.
 
 Therefore, we need a way to synchronize load generator nodes to ensure they all start ramping up the load at the same time, and stay in line with each other to match the predefined pattern of load.
 
@@ -360,16 +360,58 @@ Due to the extensibility of k6, we were able to build a custom extension that tr
 
 #### i. Choosing a container orchestration tool
 
+One of the easiest ways to move to a distributed architecture is to leverage containers. Containers allow us to duplicate applications along with their environment and dependencies for efficient deployment to multiple hosts. Deploying services with containers requires some kind of container orchestration tool. This enables us to deploy services, distribute load, tear down components as needed to facilitate the sometimes complex workflows of load testing.
+
+Two of the major offerings for container orchestration in the AWS ecosystem are ECS (Elastic Container Services) and EKS (Elastic Kubernetes Services). Edamame deploys to EKS to take advantage of Kubernetes Secrets and ConfigMaps. These components allow us to specify potentially sensitive values like authentication credentials and environment variables and share them easily across Deployments. For example, multiple components in our architecture need access to the database; we can share credentials to enable this easily and securely by referencing a Kubernetes Secret in our Deployment configuration files for these components.
+
+Kubernetes Services provide a permanent IP address to pods that persists across pod life cycles. This facilitates communication across nodes between different components of Edamame. Services are meant to act like sidecars to a pod, so that they are not linked to the lifecycle of the pod. This makes our intra-network communication more resilient.
+
+The main benefit of EKS is that it enables Edamame to manage the complex synchronization of load generator pods in an efficient way.
+
 #### ii. Load generator synchronization
 
-#### iii. Managing compute resources for load generators
+The Kubernetes operator pattern allows Edamame to synchronize and manage distributed test runners over the duration of the load test. In Kubernetes, Operators are meant to extend the functionality of the API by providing domain specific knowledge in the form of custom objects and processes.
+
+By default, [Kubernetes primitives are not meant to manage state](https://github.com/cncf/tag-app-delivery/blob/eece8f7307f2970f46f100f51932db106db46968/operator-wg/whitepaper/Operator-WhitePaper_v1-0.md). Because load tests must be synchronized, there is an inherent element of state built into the deployment of the runner pods; the status of all the runners must be known before a single runner can begin execution. We can use an Operator to solve this problem of state management.
+
+<div class="text--center" >
+  <img src={Placeholder} alt="Example banner" width="400"/>
+  <p>🖼️Zoomed in on the depiction of the load generator node group + k6 operator.</p>
+</div>
+
+K6 has provided us with just such an Operator, it contains the domain specific knowledge necessary to manage the complex workflows of running a distributed k6 load test. When the user provides a test script, Edamame creates a ConfigMap with the desired test script. Edamame then applies a custom resource to the Operator that specifies both the test script that should be run and properties that determine how that test should be run (i.e. how many separate runners should be created).
+
+Once it receives these parameters, the Operator communicates with the Control Plane API to schedule three components:
+
+- The initializer performs error handling for the test. It uses the Operator's domain specific knowledge to ensure that everything is configured in a way that's best for k6 load test (for example, it checks the validity of the test script).
+- The starter is responsible for starting the execution of the test simultaneously in all runner pods.
+- The runner pods contain the custom k6 binary along with the test script, and are responsible for generating the load and running the test.
+
+The Operator then continuously polls the runner pods for readiness, and when they are all ready, sends a signal to the starter pod to start the test.
+
+#### iii. Managing compute resources
+
+Though the k6 operator takes care of generating the necessary number of pods, Edamame still needs to configure the compute resources used run those pods. This helps us ensure the pods are running efficiently. To do so, the cluster has a designated node group for load generator pods that starts at 0 and scales up each time a test is run, which keeps AWS charges to a minimum.
+
+<div class="text--center" >
+  <img src={Placeholder} alt="Example banner" width="400"/>
+  <p>🖼️Can have an animation here that shows node group scaling up and down, potentially with enough detail to show what affinity and anti-affinity rules are doing as well.</p>
+</div>
+
+When Edamame runs a load test, properties such as Affinity/Anti-Affinity and Taints/Tolerations are used to ensure that each runner is scheduled on a single node within the designated node group. Affinity rules are Kubernetes configuration values that can be used to ensure pods running specific processes (i.e. our load generator pods) are being scheduled on the ideal node for those processes. Anti-Affinity rules prevent the same kind of pod from being placed on the same node. Taints and Tolerations ensure pods are *not* scheduled on the wrong kind of node (they allow a node to "repel" a certain kind of pod). Ensuring that a single node only hosts one runner pod allows us to maximize the computing resources of each node within the specialized node group.
+
+The node group is specially configured to contain nodes that maximize efficiency of the load generators. [K6 benchmarks](https://github.com/grafana/k6-benchmarks/tree/master/results/v0.42.0) indicate that up to 60k virtual users can be supported by a single `m5.4xlarge` node. That being said, how test scripts are written can radically affect how much memory a single virtual user requires. The [official k6 recommendation](https://k6.io/docs/testing-guides/running-large-tests/) is to run no more than 30-40k virtual users per node. To be even safer, Edamame has a default value of 20k virtual users per node, but users can change this value to suit the needs of their specific tests.
+
+To further maximize compute resources, changes are made to the kernel parameters for the specialized nodes. These include `sysctl` commands like extending the range of ports that can be used for outgoing connections, which increases the maximum requests per second.
 
 ### c. Collecting and displaying data in near real-time
 
-#### i. Stream processing
+#### i. Stream processing with statsite and the StatsD protocol
 
-#### ii. Persisting data
+#### ii. Storing data in PostgreSQL
 
 #### iii. Visualizing results in near real-time
 
 ## 8. Future plans
+
+#### i. Improv
