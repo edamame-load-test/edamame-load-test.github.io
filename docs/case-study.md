@@ -16,7 +16,6 @@ What happens when a web application gets more traffic than anticipated? Can the 
 
 <!-- markdownlint-disable MD033 -->
 import Placeholder from './assets/logo-light-green.png';
-
 <div class="text--center" >
   <img src="https://preview.redd.it/adi71n2nzl0a1.jpg?width=960&crop=smart&auto=webp&v=enabled&s=43a31699ab3508f3eb31d20b6bd8c32c6ecbfb41" alt="Example banner" width="400"/>
   <p> 🖼️ Tweet or screenshot of Ticketmaster going down</p>
@@ -270,10 +269,12 @@ If a developer does not wish to manage the complexity involved with a distribute
 
 That being said, cloud-based solutions also have their trade-offs. They can be very costly. Moreover, because all data storage is managed, a user does not retain control over their own data. Different cloud-based solutions will place different limits on how long data is retained.
 
-<div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
-  <p> 🖼️Chart of Cloud-based tools</p>
-</div>
+|                  | k6 Cloud           | Gatling Enterprise                                                                       | BlazeMeter (JMeter)                 | Artillery                                                                   |
+|------------------|--------------------|------------------------------------------------------------------------------------------|-------------------------------------|-----------------------------------------------------------------------------|
+| Price            | $1199 / month     | $900 dollars / month                                                                     | $499 / month                        | $1119 / month (Self-hosted on own AWS; users will incur additional charges) |
+| Max VUs per test | 3000 virtual users | 240000 virtual users                                                                     | 5000 virtual users                  | No limit (1000 generators per test; VUs per generator is unspecified)       |
+| Test duration    | 60 minutes         | 24 hours                                                                                 | 2 Hours                              | No limit                                                                    |
+| Number of tests  | 100 tests          | 6000 "credits" (1 credit is 1 min of generator use; can use up to 6 generators per test) | 6500 "virtual user hours" per month | No limit                                                                    |
 
 Another issue is cloud-based solutions are not as flexible. For example, the k6 open-source load tester is quite extensible, which allows developers to customize which metrics their load tests are tracking by default. However, the [k6 cloud platform does not support utilizing these extensions](https://k6.io/blog/extending-k6-with-xk6/), which compromises developer experience.
 
@@ -498,4 +499,28 @@ Since Grafana dashboards are defined using SQL queries, the user can easily cust
 
 ## 8. Future plans
 
-#### i. Improv
+Edamame provides a good framework for performing distributed load tests that target both HTTP and WebSockets. It supports tests of up to 200k virtual users, sufficiently tests complex systems with multiple protocols, and uses a performant data pipeline to aggregate and visualize data in near real-time. That being said, there are a number of improvements and additional features that could be added in the future.
+
+### a. Improving scalability
+
+Edamame's data pipeline relies on a single instance of a Statsite server in order to aggregate test metrics into percentiles accurately. The ability to horizontally scale this component is limited by the complications that aggregating percentiles brings. This means that we cannot currently scale beyond its maximum ingestion rate of 2 million data points per second. This is the main limiting factor when it comes to how many virtual users Edamame can support.
+
+To increase the number of virtual users Edamame can support given its current architecture, we can further customize the k6 StatsD output extension. Currently, it does not consolidate metrics like counters, which can be easily aggregated without data loss. Summing these data points into a single piece of data would mitigate the amount of data being output by the load generators, and increase the number of virtual users that can be generated before reaching Statsite's maximum ingestion rate.
+
+To make Edamame able to handle even larger load tests, we can make the data pipeline more horizontally scalable. This would involve re-working the architecture, by switching to an approach where data is aggregated at each load generator. Using [t-digest](https://redis.com/blog/t-digest-in-redis-stack/), a probabilistic data structure, enables us to aggregate percentiles in more than one location: once at the node level and then again at the server level. The ability to re-aggregate would immediately cut down on the amount of data being sent, allowing Edamame to scale to even higher numbers of virtual users.
+
+Currently, there is no support for t-digest in the k6 ecosystem, nor is there an available t-digest aggregation server, so this approach would involve developing a number of custom components from scratch.
+
+### b. Node observability
+
+One consideration when adding the ability for users to set a custom number of virtual users per load generator pod is how the user understands whether or not they are overloading the pod. To give insight into this question, Edamame can increase the observability of load test performance. Currently, visibility into the health of load generator nodes can be ascertained by installing a [Kubernetes Dashboard](https://github.com/kubernetes/dashboard).
+
+Rather than relying on additional third-party resources, in the future Edamame should provide metrics like CPU consumption, RAM consumption, and bandwidth for load generator nodes. This would allow the user to tailor how load generating infrastructure is set up in a way that's more specific to the tests they are running.
+
+### c. Data import and export
+
+Currently all AWS resources are deleted with the command `edamame teardown`, including EBS volumes. This means that data is *not* persisted beyond the lifecycle of the EKS cluster that supports Edamame's architecture. We'd like to give users a way to export data when removing AWS resources, to decrease vendor lock-in.
+
+As Edamame already contains a separate backend API for the database in the form of an Express app, components are already in place to provide this service. To perform the export, one approach would be to create an SQL file representing all the data in the database and store this in an S3 bucket. This file could then be used to load the data into another database of the user's choosing.
+
+This approach also enabled Edamame to check for the presence of such a file during the initialization process, and use it to populate the database with the previous cluster's data. This would ensure that data is persisted across cluster lifecycles, should the user ever need to take down their EKS infrastructure for any reason.
