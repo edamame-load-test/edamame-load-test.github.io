@@ -6,7 +6,7 @@ Edamame is a distributed load testing framework for testing messaging applicatio
 
 Creating a load tester with these features comes with a unique set of challenges. First, the load tester needs to test the target system with multiple protocols in tandem and ensure that the concerns of different protocols are thoroughly addressed. Second, the kind of traffic medium-sized companies need to simulate requires a distributed architecture, which adds significant complexity to the tool. Third, providing client-side metrics in near real-time means systems need to be in place to collect, process, store, and visualize data in a performant way.
 
-Edamame provided an open-source, easy-to-use, plug-and-play solution to the above challenges.
+Edamame provides an open-source, easy-to-use, plug-and-play solution to the above challenges.
 
 ## 2. Background: load testing
 
@@ -16,9 +16,10 @@ What happens when a web application gets more traffic than anticipated? Can the 
 
 <!-- markdownlint-disable MD033 -->
 import Placeholder from './assets/logo-light-green.png';
+import ticketmaster from './assets/2a-ticketmaster.jpeg';
 
 <div class="text--center" >
-  <img src="https://preview.redd.it/adi71n2nzl0a1.jpg?width=960&crop=smart&auto=webp&v=enabled&s=43a31699ab3508f3eb31d20b6bd8c32c6ecbfb41" alt="Example banner" width="400"/>
+  <img src={ticketmaster} width="400"/>
   <p> 🖼️ Tweet or screenshot of Ticketmaster going down</p>
 </div>
 
@@ -26,8 +27,11 @@ Overwhelming traffic is a frustrating reality for many internet users. Whether i
 
 Developers, to ensure their application can handle this kind of situation, re-create high-traffic scenarios by performing load tests. **Load testing** is the process of simulating user load on a system and measuring how that system responds. In a load test, a set number of programmatically generated "virtual users" are automated to interact with the system in pre-defined ways. This process helps developers identify performance bottlenecks within a system and provides assurance that the system can maintain expected standards, even under heavy strain.
 
+<!-- markdownlint-disable MD033 -->
+import simpleLoadTest from './assets/2-1-Distributed-Load-Test.png';
+
 <div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
+  <img src={simpleLoadTest} alt="Example banner" width="800"/>
   <p> 🖼️Depiction of a simple load test</p>
 </div>
 
@@ -68,8 +72,11 @@ That being said, this approach has challenges of its own. Data generated from lo
 
 Instead, it's more effective to find the 50th percentile, also known as the median. If your median is 200ms, now you know that 50% of response times were less than 200ms, and 50% were more. Looking at the tail end (>90%) of percentiles allows developers to understand the experience the majority of users have. For example, if the 99th percentile of response times is 200ms, it means that 99% of users have response times equal to or less than 200ms. In the context of load testing, therefore, looking at higher percentiles (90th, 95th, 99th) tends to be more telling than the median.
 
+<!-- markdownlint-disable MD033 -->
+import percentiles from './assets/2-b-i-percentiles.png';
+
 <div class="text--center" >
-  <img src="https://loadium.com/wp-content/uploads/2021/01/f1-1-1200x601.png" alt="Example banner" width="400"/>
+  <img src={percentiles} alt="Example banner" width="800"/>
   <p> 🖼️Visualizing 99% percentiles</p>
 </div>
 
@@ -87,8 +94,11 @@ There are three main limiting factors to local load testing:
 - **Memory**: Load tests running on a single host cannot generate more virtual users than the RAM will support. Load tests often use 1 - 20 MB per virtual user, so even with only 1000 VUs, you might need up to 20GB of RAM to run that load test.
 - **Network**: If the network throughput is too low, the load test may not accurately simulate the real-world conditions of user traffic, resulting in inaccurate or unreliable test results. For instance, in our example host above the network bandwidth is [up to 10GB](https://aws.amazon.com/ec2/instance-types/m5/).
 
+<!-- markdownlint-disable MD033 -->
+import distributedLoadTest from './assets/2-b-ii-distributed-load-test.png';
+
 <div class="text--center" >
-  <img src="https://k6.io/blog/static/f6d6d11d1540298928886d94d481824f/06b13/1_-_li-load-testing-overview.png" alt="Example banner" width="400"/>
+  <img src={distributedLoadTest} alt="Example banner" width="800"/>
   <p> 🖼️Depiction of a distributed load test</p>
 </div>
 
@@ -100,8 +110,11 @@ Another consideration is which environment we target in our load tests. Develope
 
 That being said, we may still want to run load tests in a production environment because this yields the most accurate results. Moreover, some companies (such as fast-growth startups) may not have the time or financial resources to implement a full duplicate staging environment. Finally, there might be overlapping resources between both staging and production. In this case, staging environments are not perfectly isolated, and care needs to be taken to prevent consequences for real end users.
 
+<!-- markdownlint-disable MD033 -->
+import sharedEnvironment from './assets/2-b-iii-shared-environment.png';
+
 <div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
+  <img src={sharedEnvironment} alt="Example banner" width="800"/>
   <p> 🖼️Depiction of staging and production potentially having overlapping resources</p>
 </div>
 
@@ -127,8 +140,11 @@ Collaboration apps are applications that include some kind of real-time communic
 
 All of these tools benefit from [low-latency data transfer](https://ably.com/blog/what-it-takes-to-build-a-realtime-chat-or-messaging-app) (~100ms) and the ability for a server to push data directly to a client without relying on a request. To achieve these goals, the above collaboration apps rely on WebSockets.
 
+<!-- markdownlint-disable MD033 -->
+import httpVsWs from './assets/3-a-http-vs-ws.png';
+
 <div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
+  <img src={httpVsWs} alt="Example banner" width="800"/>
   <p> 🖼️Depiction of the difference between HTTP and WS</p>
 </div>
 
@@ -163,8 +179,11 @@ For the aforementioned apps, the message being published can take the form of ei
 
 For example, if you send a message to a Slack channel with 1k subscribers, the single POST request that sends the message turns into 1k WebSocket messages being emitted.
 
+<!-- markdownlint-disable MD033 -->
+import fanout from './assets/3-b-iii-fanout.gif';
+
 <div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
+  <img src={fanout} alt="Example banner" width="400"/>
   <p> 🖼️Fanout</p>
 </div>
 
@@ -185,18 +204,24 @@ Due to the rise of remote work, applications in this space can grow very quickly
 
 Typically, the HTTP server and WS server need to be tested in tandem to get an accurate picture of how the system responds to load. For applications that only support HTTP endpoints, an HTTP load tester is sufficient. However, collaboration apps cannot rely on HTTP requests alone for load testing, as client traffic is divided between two different protocols. HTTP-focused load tests do not cover all components of a collaborative application's architecture.
 
+<!-- markdownlint-disable MD033 -->
+import partialCoverage from './assets/4-a-ws-vs-http.png';
+
 <div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
-  <p> 🖼️An image that shows how a traditional API blaster only tests part of the system / re-working of the first koi pond diagram. </p>
+  <img src={partialCoverage} alt="Example banner" width="800"/>
+  <p> 🖼️An image that shows how HTTP only tests part of the infrastructure </p>
 </div>
 
 In an HTTP load test, requests are sent to the HTTP server. This causes data to be sent to the WebSocket server in response so that the messages received can be propagated to subscribed users. However, if the virtual users in the load test do not maintain persistent WebSocket connections, the WebSocket server never has to emit any messages (there are no active subscribers). This means that a critical part of the architecture never has to sustain any load.
 
 Due to fan-out messaging, the number of WebSocket messages that must be sent (and therefore, the amount of load the WebSocket server must sustain) can be orders of magnitude different from the amount of HTTP requests being received. It is of vital importance that the virtual users in the load test accurately simulate the persistently connected WebSocket clients.
 
+<!-- markdownlint-disable MD033 -->
+import fullCoverage from './assets/4-a-full-coverage.png';
+
 <div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
-  <p> 🖼️An image that shows how a system can be tested holistically, with persistently connected clients to show how it </p>
+  <img src={fullCoverage} alt="Example banner" width="800"/>
+  <p> 🖼️An image that shows how a system can be tested holistically, with persistently connected clients</p>
 </div>
 
 This limits the choice of load testing tools to those that support both HTTP and WebSockets. The load tester should also collect meaningful metrics pertaining to both protocols, which may or may not be included.
@@ -209,8 +234,10 @@ While the actual number of daily active users varies from company to company, ou
 
 Running load tests that generate 200k virtual users necessitates a distributed architecture, due to the amount of compute resources required. In most cases, this means moving to the cloud. This requires a number of different cloud-based components, meaning we need a system to manage the required infrastructure.
 
+import peakLoad from './assets/4-b-peak-load.png';
+
 <div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
+  <img src={peakLoad} alt="Example banner" width="800"/>
   <p> 🖼️Visualizing why syncing nodes is important</p>
 </div>
 
@@ -254,7 +281,7 @@ Edamame aims to bridge the gap between open-source and paid cloud services by pr
 A number of real-world collaborative apps have taken a DIY approach to either develop a custom load testing tool or extend an existing open-source tool and manage the distribution.
 
 <div class="text--center" >
-  <img src="https://slack.engineering/wp-content/uploads/sites/7/2021/04/Screen-Shot-2021-04-21-at-4.30.30-PM.png" alt="Example banner" width="400"/>
+  <img src="https://slack.engineering/wp-content/uploads/sites/7/2021/04/Screen-Shot-2021-04-21-at-4.30.30-PM.png" alt="Example banner" width="800"/>
   <p> 🖼️Koi Pond</p>
 </div>
 
@@ -270,9 +297,12 @@ If a developer does not wish to manage the complexity involved with a distribute
 
 That being said, cloud-based solutions also have their trade-offs. They can be very costly. Moreover, because all data storage is managed, a user does not retain control over their own data. Different cloud-based solutions will place different limits on how long data is retained.
 
+<!-- markdownlint-disable MD033 -->
+import cloudServices from './assets/5-b-cloud-services.png';
+
 <div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
-  <p> 🖼️Chart of Cloud-based tools</p>
+  <img src={cloudServices} alt="Example banner" width="800"/>
+  <p>🖼️Chart that compares cloud services</p>
 </div>
 
 Another issue is cloud-based solutions are not as flexible. For example, the k6 open-source load tester is quite extensible, which allows developers to customize which metrics their load tests are tracking by default. However, the [k6 cloud platform does not support utilizing these extensions](https://k6.io/blog/extending-k6-with-xk6/), which compromises developer experience.
@@ -292,8 +322,10 @@ Edamame is a specific tool built for a specific use case, so it has limitations 
 
 ## 6. Edamame architecture
 
+import architecture from "./assets/6-architecture.png";
+
 <div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
+  <img src={architecture} alt="Example banner" width="800"/>
   <p>🖼️High level overview of architecture</p>
 </div>
 
@@ -341,8 +373,10 @@ Edamame utilizes and extends k6 for it's load testing framework. We chose k6 bec
 
 While k6 provides many benefits, the default metrics for WebSockets have limitations in that they do not tell the full story of how the targeted WebSocket server is performing. For example, `ws_session_duration` is determined by the user's test script and does not have a high correlation with WebSocket server performance.
 
+import binary from "./assets/7-a-binary.png";
+
 <div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
+  <img src={binary} alt="Example banner" width="800"/>
   <p>🖼️Show where the custom extension goes and how the binary is compiled</p>
 </div>
 
@@ -374,8 +408,10 @@ The Kubernetes operator pattern allows Edamame to synchronize and manage distrib
 
 By default, [Kubernetes primitives are not meant to manage state](https://github.com/cncf/tag-app-delivery/blob/eece8f7307f2970f46f100f51932db106db46968/operator-wg/whitepaper/Operator-WhitePaper_v1-0.md). Because load tests must be synchronized, there is an inherent element of state built into the deployment of the runner pods; the status of all the runners must be known before a single runner can begin execution. We can use an Operator to solve this problem of state management.
 
+import operator from "./assets/7-b-operator.png";
+
 <div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
+  <img src={operator} alt="Example banner" width="800"/>
   <p>🖼️Zoomed in on the depiction of the load generator node group + k6 operator.</p>
 </div>
 
@@ -464,8 +500,10 @@ Edamame persists data using a PostgreSQL database. Since the data aggregation pi
 
 Since the rest of Edamame's architecture is deployed to EKS, it made sense to take advantage of Kubernetes internal Service components and deploy PostgreSQL to the cluster as well. This makes it simple for all components to communicate with each other (they are within the same VPS, and Kubernetes provides persistent IPs for each). This also means the user does not have to pay for a managed database solution, which can be costly. The drawback with this approach is that Kubernetes pods are ephemeral; containers do not persist data across their lifecycle without some additional components to facilitate this.
 
+import db from "./assets/7-b-ii-database.png";
+
 <div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
+  <img src={db} alt="Example banner" width="800"/>
   <p>🖼️Zoomed in image of the DB with connection to EBS volume.</p>
 </div>
 
@@ -477,8 +515,10 @@ That being said, there are some small trade-offs involved. It adds a bit of comp
 
 #### iii. Visualizing results in near real-time
 
+import grafana from "./assets/7-c-iii-Grafana.png";
+
 <div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
+  <img src={grafana} alt="Example banner" width="800"/>
   <p>🖼️Zoomed in image of Grafana connecting to DB and our UI.</p>
 </div>
 
@@ -498,4 +538,28 @@ Since Grafana dashboards are defined using SQL queries, the user can easily cust
 
 ## 8. Future plans
 
-#### i. Improv
+Edamame provides a good framework for performing distributed load tests that target both HTTP and WebSockets. It supports tests of up to 200k virtual users, sufficiently tests complex systems with multiple protocols, and uses a performant data pipeline to aggregate and visualize data in near real-time. That being said, there are a number of improvements and additional features that could be added in the future.
+
+### a. Improving scalability
+
+Edamame's data pipeline relies on a single instance of a Statsite server in order to aggregate test metrics into percentiles accurately. The ability to horizontally scale this component is limited by the complications that aggregating percentiles brings. This means that we cannot currently scale beyond its maximum ingestion rate of 2 million data points per second. This is the main limiting factor when it comes to how many virtual users Edamame can support.
+
+To increase the number of virtual users Edamame can support given its current architecture, we can further customize the k6 StatsD output extension. Currently, it does not consolidate metrics like counters, which can be easily aggregated without data loss. Summing these data points into a single piece of data would mitigate the amount of data being output by the load generators, and increase the number of virtual users that can be generated before reaching Statsite's maximum ingestion rate.
+
+To make Edamame able to handle even larger load tests, we can make the data pipeline more horizontally scalable. This would involve re-working the architecture, by switching to an approach where data is aggregated at each load generator. Using [t-digest](https://redis.com/blog/t-digest-in-redis-stack/), a probabilistic data structure, enables us to aggregate percentiles in more than one location: once at the node level and then again at the server level. The ability to re-aggregate would immediately cut down on the amount of data being sent, allowing Edamame to scale to even higher numbers of virtual users.
+
+Currently, there is no support for t-digest in the k6 ecosystem, nor is there an available t-digest aggregation server, so this approach would involve developing a number of custom components from scratch.
+
+### b. Node observability
+
+One consideration when adding the ability for users to set a custom number of virtual users per load generator pod is how the user understands whether or not they are overloading the pod. To give insight into this question, Edamame can increase the observability of load test performance. Currently, visibility into the health of load generator nodes can be ascertained by installing a [Kubernetes Dashboard](https://github.com/kubernetes/dashboard).
+
+Rather than relying on additional third-party resources, in the future Edamame should provide metrics like CPU consumption, RAM consumption, and bandwidth for load generator nodes. This would allow the user to tailor how load generating infrastructure is set up in a way that's more specific to the tests they are running.
+
+### c. Data import and export
+
+Currently all AWS resources are deleted with the command `edamame teardown`, including EBS volumes. This means that data is *not* persisted beyond the lifecycle of the EKS cluster that supports Edamame's architecture. We'd like to give users a way to export data when removing AWS resources, to decrease vendor lock-in.
+
+As Edamame already contains a separate backend API for the database in the form of an Express app, components are already in place to provide this service. To perform the export, one approach would be to create an SQL file representing all the data in the database and store this in an S3 bucket. This file could then be used to load the data into another database of the user's choosing.
+
+This approach also enabled Edamame to check for the presence of such a file during the initialization process, and use it to populate the database with the previous cluster's data. This would ensure that data is persisted across cluster lifecycles, should the user ever need to take down their EKS infrastructure for any reason.
