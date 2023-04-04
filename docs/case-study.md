@@ -2,9 +2,9 @@
 
 ## 1. Abstract
 
-Edamame is a distributed load testing framework for testing messaging applications and collaboration tools that use both HTTP and WebSocket protocols. Edamame is built for medium-sized companies and can support up to 200k concurrently connected users. Edamame collects client-side metrics and displays data in near real-time, which provides developers with deep insight into their systems. The ability to dynamically start and stop tests makes Edamame safe to run in either a staging or production environment.
+Edamame is a distributed load testing framework for real-time collaboration apps that use both HTTP and WebSockets. Edamame is built for medium-sized companies and can support up to 200k concurrently connected users. Edamame collects client-side metrics and displays data in near real-time, which provides developers with deep insight into their systems. The ability to dynamically start and stop tests makes Edamame safe to run in either a staging or production environment.
 
-Creating a load tester with these features comes with a unique set of challenges. First, the load tester needs to test the target system with multiple protocols in tandem and ensure that the concerns of different protocols are thoroughly addressed. Second, the kind of traffic medium-sized companies need to simulate requires a distributed architecture, which adds significant complexity to the tool. Third, providing client-side metrics in near real-time means systems need to be in place to collect, process, store, and visualize data in a performant manner.
+Creating a load tester with these features comes with a unique set of challenges. First, the load tester needs to test the target system with multiple protocols in tandem and ensure that the concerns of different protocols are thoroughly addressed. Second, medium-sized companies need to simulate a high volume of traffic, which requires a distributed architecture and adds significant complexity to the tool. Third, providing client-side metrics in near real-time means systems need to be in place to collect, process, store, and visualize data in a performant manner.
 
 Edamame provides an open-source, easy-to-use, plug-and-play solution to the above challenges.
 
@@ -226,7 +226,7 @@ The load tester should also collect meaningful metrics pertaining to both HTTP a
 
 ### b. Scaling to 100K+ concurrent users
 
-Collaboration apps have different needs for load tests, as the number of daily active users varies from company to company. For example, Miro grew from 12k to 100k currently connected users in less than a year. Another real-time collaboration app we contacted privately indicated they were running load tests of up to 100k concurrent users. For Slack, load tests ranged from 5k to 500k virtual users. Based on this, we believe that an effective load tester for a company in this space should be able to run load tests in the six-figure range (at least 100k virtual users).
+Collaboration apps have different needs for load tests, as the number of daily active users varies from company to company. For example, Miro grew from 12k to 100k concurrently connected users in less than a year. Another real-time collaboration app we contacted privately indicated they were running load tests of up to 100k concurrent users. For Slack, load tests ranged from 5k to 500k virtual users. Based on this, we believe that an effective load tester for a company in this space should be able to run load tests in the six-figure range (at least 100k virtual users).
 
 Running load tests that generate this amount of virtual users necessitates a distributed architecture, due to the amount of compute resources required. In most cases, this means moving to the cloud. This requires several different cloud-based components, meaning the load tester needs a system to manage the required infrastructure.
 
@@ -346,7 +346,7 @@ Our goal while building Edamame was to provide a tool that met all the specifica
 
 #### i. Choosing a load testing tool
 
-There are many open-source tools for load testing we could have built upon to ensure Edamame generated both HTTP and WebSocket traffic. Several factors should be considered when selecting one, including performance, usability, and level of WebSocket support.
+There are many open-source tools for load testing we could have built upon to ensure Edamame generated both HTTP and WebSocket traffic. We made several considerations when selecting one, including performance, usability, and level of WebSocket support.
 
 Performance considerations include things like requests per second and memory usage. Requests per second (or RPS) measures how much traffic a load testing tool is generating. A higher RPS means a more performant load generator, as it represents CPU efficiency; a higher RPS means less CPU is utilized per request. Memory usage is also a concern when trying to determine how scalable a load testing tool is, as large numbers of virtual users can be very demanding on RAM. Because Edamame needs to support such a high number of virtual users, we need a tool that requires a minimal amount of RAM per VU.
 
@@ -535,7 +535,7 @@ Edamame's data pipeline relies on a single instance of a Statsite server to accu
 
 To simulate more than 200k virtual users using Edamame without changing its current architecture, we can further customize the k6 StatsD output extension. Currently, it does not consolidate metrics like counters, which can be easily aggregated without data loss. Summing these data points into a single piece of data would decrease the amount of data being output per virtual user. This increases the amount of simulated load Edamame can generate before reaching Statsite's maximum ingestion rate.
 
-Alternatively, we can make the data pipeline more horizontally scalable. This would involve re-working the architecture, by switching to an approach where data is aggregated at each load generator. Using [t-digest](https://redis.com/blog/t-digest-in-redis-stack/)enables us to aggregate percentiles in more than one location. The ability to accurately re-aggregate would immediately cut down on the amount of data being sent through the stream processor, allowing Edamame to scale to even higher numbers of virtual users.
+Alternatively, we can make the data pipeline more horizontally scalable. This would involve re-working the architecture, by switching to an approach where data is aggregated at each load generator. Using [t-digest](https://redis.com/blog/t-digest-in-redis-stack/) enables us to aggregate percentiles in more than one location. The ability to accurately re-aggregate would immediately cut down on the amount of data being sent through the stream processor, allowing Edamame to scale to even higher numbers of virtual users.
 
 That being said, aggregating data at each load generator involves sharing compute resources between test runners and data aggregation processes running on the same node. Moreover, there is no current support for t-digest in the k6 ecosystem, nor is there an available t-digest aggregation server, so this approach would involve developing several custom components from scratch.
 
