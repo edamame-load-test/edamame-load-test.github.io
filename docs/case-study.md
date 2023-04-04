@@ -436,11 +436,11 @@ When Edamame runs a load test, properties such as Affinity/Anti-Affinity and Tai
 
 The node group is specially configured to contain nodes that maximize the efficiency of the load generators. K6 benchmarks[^22] indicate that up to 60k virtual users can be supported by a single `m5.24xlarge` node. That being said, how test scripts are written can radically affect how much memory a single virtual user requires. The official k6 recommendation[^23] is to run no more than 30-40k virtual users per node. To be even safer, Edamame has a default value of 20k virtual users per node, but users can change this value to suit the needs of their specific tests.
 
-To further maximize compute resources, changes are made to the kernel parameters for the specialized nodes. These include `sysctl` commands like extending the range of ports that can be used for outgoing connections, which increases the maximum requests per second. As making these adjustments requires low-level system access, Edamame deploys using EC2 instances with EKS rather than a serverless offering like Fargate.
+To further maximize compute resources, Edamame changes the kernel parameters for the specialized nodes. These include `sysctl` commands like extending the range of ports that can be used for outgoing connections, which increases the maximum requests per second. As making these adjustments requires low-level system access, Edamame deploys using EC2 instances with EKS rather than a serverless offering like Fargate.
 
 ### c. Collecting and displaying data in near real-time
 
-While k6 was an ideal choice for a load testing tool in many ways for Edamame, it does have one significant trade-off: it generates a huge amount of data. For example, a test that simulates 100k virtual users where each VU sends a WebSocket ping every second and an HTTP request every six seconds results in outputting about 1 million data points per second.
+While k6 was an ideal choice for a load testing tool in many ways for Edamame, it does have one significant trade-off: it generates a huge amount of data. For example, a test that simulates 100k virtual users where each VU sends a WebSocket ping every second and an HTTP request every six seconds results in an output of about 1 million data points per second.
 
 | VUs  | data points output/sec |
 |------|-----------------------------|
@@ -477,7 +477,7 @@ Another benefit to Statsite is that it supports multiple "sinks", or outputs. Th
   <p>🖼️Zoomed in image of the actual data pipeline portion</p>
 </div>
 
-While k6 has an output extension that enabled us to output data using StatsD, it had some issues. Namely, gauge metrics from separate load generator pods were overwriting each other (rather than being summed), so we were not receiving accurate test data. Edamame fixes this problem by providing a custom output extension that allows for gauges from separate load generators to be aggregated accurately. We wrote this output extension is written in Go to integrate easily with the k6 custom binary.
+While k6 has an output extension that enabled us to output data using StatsD, it had some issues. Namely, gauge metrics from separate load generator pods were overwriting each other (rather than being summed), so we were not receiving accurate test data. Edamame fixes this problem by providing a custom output extension that allows for gauges from separate load generators to be aggregated accurately. We wrote this output extension in Go to integrate easily with the k6 custom binary.
 
 Another hurdle was the fact that Statsite does not provide an out-of-the-box extension that sends metrics to Postgres (our chosen DB, see below). To facilitate this, Edamame includes a custom extension to Statsite written in Node. This converts data to SQL and makes the necessary writes to store the data. The writes are performed on a 5-second flush interval, which we found to provide the best balance of smoothing noise and providing near real-time data analysis.
 
