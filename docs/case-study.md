@@ -19,6 +19,7 @@ In the sections that follow, we’ll explore how Edamame offers an easy-to-use, 
 What happens when a web application gets more traffic than anticipated? Can the underlying infrastructure handle the traffic? Does the application slow down? Or—worst case scenario—does the application crash?
 
 <!-- markdownlint-disable MD033 -->
+
 import Placeholder from './assets/logo-light-green.png';
 
 <div class="text--center" >
@@ -190,6 +191,7 @@ This could lead to a large amount of fan-out where the WebSocket server might be
 </div>
 
 <!-- markdownlint-disable MD024 -->
+
 ### c. Summary
 
 Managing a real-time collaboration app poses a unique set of circumstances that developers must take into consideration. WebSocket servers and clients behave differently than their HTTP counterparts, so additional scenarios like WebSocket performance, thundering herds, and fan-out messaging must be accounted for. To ensure readiness for these scenarios, developers should perform load tests that accurately simulate these behaviors.
@@ -219,6 +221,7 @@ In an HTTP load test, requests are sent to the HTTP server. In response, this ca
 Due to fan-out messaging, the number of WebSocket messages that must be sent (and therefore, the amount of load the WebSocket server must sustain) can be orders of magnitude different from the number of HTTP requests being received. It is important that the virtual users in the load test accurately simulate the persistently connected WebSocket clients.
 
 <!-- markdownlint-disable MD033 -->
+
 import fullCoverage from './assets/4-a-full-coverage.png';
 
 <div class="text--center" >
@@ -230,7 +233,7 @@ import fullCoverage from './assets/4-a-full-coverage.png';
 
 Collaboration apps have different needs for load tests, as the number of daily active users varies from company to company. For example, Miro grew from 12k to 100k concurrently connected users in less than a year. [^9] Another large real-time collaboration app we contacted privately indicated they were running load tests of up to 100k concurrent users. For Slack, load tests range from 5k to 500k virtual users.[^10] Based on these numbers, we believe that an effective load tester for medium-to-large collaboration apps should be able to run load tests in the six-figure range (at least 100k virtual users).
 
-Running load tests with 100K+ virtual users will quickly outstrip the compute resources available on a single machine, and will therefore require a distributed architecture. While it’s possible to run distributed load tests using on-premises servers, developers will often  run load tests on servers hosted by cloud providers like AWS. This provides greater flexibility and scalability, allowing developers to quickly provision and deprovision resources as needed for testing without additional hardware investments. That being said, distributed cloud-based load testing adds additional complexity and requires both management and coordination of cloud infrastructure.
+Running load tests with 100K+ virtual users will quickly outstrip the compute resources available on a single machine, and will therefore require a distributed architecture. While it’s possible to run distributed load tests using on-premises servers, developers will often run load tests on servers hosted by cloud providers like AWS. This provides greater flexibility and scalability, allowing developers to quickly provision and deprovision resources as needed for testing without additional hardware investments. That being said, distributed cloud-based load testing adds additional complexity and requires both management and coordination of cloud infrastructure.
 
 One of the major concerns with distributed load testing involves the synchronization of load generators running on separate hosts. Load tests often have a predefined pattern for ramping the number of virtual users up and down. Different patterns test how systems respond to different scenarios.
 
@@ -305,11 +308,11 @@ Several real-world collaborative apps have taken a DIY approach to either develo
   <p>Figure 5.1: Slack's DIY tool for load testing called “Koi Pond”</p>
 </div>
 
-Slack built Koi Pond[^11], which is an internal tool that leverages a distributed Kubernetes architecture to ensure sufficient connected virtual users. Load is generated using a custom tool written in Go, and virtual user behavior is dictated by a JSON file. Koi Pond streams data which is displayed in a Grafana dashboard as a test runs.
+Slack built Koi Pond[^10], which is an internal tool that leverages a distributed Kubernetes architecture to ensure sufficient connected virtual users. Load is generated using a custom tool written in Go, and virtual user behavior is dictated by a JSON file. Koi Pond streams data which is displayed in a Grafana dashboard as a test runs.
 
-Miro facilitates WebSocket load testing by extending JMeter with a plugin and custom scripts. To mitigate the costs associated with running load tests on AWS, they use temporary Spot instances which are only active for the duration of the test.[^10]
+Miro facilitates WebSocket load testing by extending JMeter with a plugin and custom scripts. To mitigate the costs associated with running load tests on AWS, they use temporary Spot instances which are only active for the duration of the test.[^9]
 
-Neither of these two tools, however, are available for public use. They represent proprietary technology that’s only available at the company that specifically developed them.  
+Neither of these two tools, however, are available for public use. They represent proprietary technology that’s only available at the company that specifically developed them.
 
 For developers looking to build their own framework for running distributed load tests, AWS[^14] and Google Cloud[^15] both have guides on how to manage the underlying infrastructure to facilitate this. In this approach, the developer takes on all responsibility for the challenges associated with running a distributed test.
 
@@ -323,6 +326,8 @@ That being said, cloud-based solutions also have their trade-offs. They can be v
   <img src={Placeholder} alt="Example banner" width="400"/>
   <p>Figure 5.3: A comparison of cloud-based solutions</p>
 </div>
+
+[^16]
 
 Another issue is that cloud-based solutions are not very flexible. For example, the k6 open-source load tester is quite extensible, which allows developers to customize which metrics their load tests are tracking by default. However, the k6 cloud platform does not support utilizing these extensions,[^17] which compromises developer experience.
 
@@ -454,11 +459,11 @@ Next, we’ll talk about the “data handling” component of our architecture, 
 
 While k6 met most of our requirements for a load testing tool, it does have a significant trade-off: it generates a huge amount of data. By default, k6 will output all the raw data from the load test without any kind of aggregation. For example, a test that simulates 100k virtual users — where each VU sends a WebSocket ping every second or an HTTP request every six seconds — results in an output of about 1 million data points per second.
 
-| VUs  | data points/sec
-|------|----------------
-| 1K   | ~10K
-| 10K  | ~100K
-| 100K | ~ 1 M
+| VUs  | data points/sec |
+| ---- | --------------- |
+| 1K   | ~10K            |
+| 10K  | ~100K           |
+| 100K | ~ 1 M           |
 
 We explored three ways to process all this data in near real-time:
 
@@ -531,15 +536,15 @@ K6 provides an interface that allows users to emit custom metrics. However, this
 Furthermore, instead of looking at the number of WebSocket errors in general, developers might want to take a more granular look at what’s happening when errors occur. This can be achieved by tracking errors separately. For example, looking at the count of WebSocket abnormal closures can indicate when the server is dropping connections, but looking at the count of WebSocket failed handshakes can indicate when the server is having trouble making new connections. Tracking errors separately in a test script means nested conditionals within `try…catch` statements, which can make code hard to read and difficult to maintain.
 
 ```javascript title="Test script that tracks WebSocket errors"
-import { Counter } from 'k6/metrics';
+import { Counter } from "k6/metrics";
 import { setInterval } from "k6/x/timers";
 // ... define duration + # of VUs here ...
 
-const failedHandshakes = new Counter('failed_handshakes');
-const abnormalClosures = new Counter('abnormal_closures');
+const failedHandshakes = new Counter("failed_handshakes");
+const abnormalClosures = new Counter("abnormal_closures");
 
 export default function () {
-  const url = 'ws://127.0.0.1:8000/';
+  const url = "ws://127.0.0.1:8000/";
   let ws = new WebSocket(url);
 
   try {
@@ -548,7 +553,7 @@ export default function () {
         ws.ping();
       }, 10000);
     });
-  } catch(e){
+  } catch (e) {
     if (e.message.match("bad handshake")) {
       failedHandshakes.add(1);
     } else if (e.message.match("1006")) {
@@ -567,13 +572,13 @@ We chose to write a custom extension that provides additional useful metrics out
 
 To produce better visibility into WebSocket performance, Edamame built a custom k6 extension in Go that tracks five additional metrics.
 
-| Metric | Description |
-|--------|-------------|
-| `ws_current_connections`| The current number of active WebSocket connections. This is important because the k6 default metrics only provide the total number of connections, rather than how many connections are being persisted at any given time. |
-| `ws_failed_handshakes`| The number of WebSocket connections that could not be established. An increase in these failures could indicate performance issues with the target system.|
-| `ws_abnormal_closure_error`| The number of connections that are dropped, measured by counting the number of 1006 abnormal closure error messages.|
-| `ws_msgs_bytes_sent`| The total number of bytes sent in WebSocket messages. As the size of messages can vary widely, this provides additional context to the default k6 `ws_msgs_sent` metric.|
-| `ws_msgs_bytes_received`| The total number of bytes received in WebSocket messages.|
+| Metric                      | Description                                                                                                                                                                                                                |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ws_current_connections`    | The current number of active WebSocket connections. This is important because the k6 default metrics only provide the total number of connections, rather than how many connections are being persisted at any given time. |
+| `ws_failed_handshakes`      | The number of WebSocket connections that could not be established. An increase in these failures could indicate performance issues with the target system.                                                                 |
+| `ws_abnormal_closure_error` | The number of connections that are dropped, measured by counting the number of 1006 abnormal closure error messages.                                                                                                       |
+| `ws_msgs_bytes_sent`        | The total number of bytes sent in WebSocket messages. As the size of messages can vary widely, this provides additional context to the default k6 `ws_msgs_sent` metric.                                                   |
+| `ws_msgs_bytes_received`    | The total number of bytes received in WebSocket messages.                                                                                                                                                                  |
 
 K6 provides two separate WebSocket modules that can be extended. The first, which is part of the k6 core offering, utilizes code syntax that is specific to k6. That is, it does not mirror the more well-known WebSocket API built into modern browsers. This means that in order to use it, developers must familiarize themselves with conventions unique to k6.
 
@@ -638,35 +643,35 @@ This approach would also enable Edamame to check for the presence of such a file
 
 ## 11. Resources
 
-[^1]: Nguyen, Britney. “Ticketmaster expected 1.5 million 'verified' Taylor Swift fans on the site but 14 million people were trying to get tickets, Live Nation chairman says: 'We could have filled 900 stadiums'.” *Insider*, 17 Nov. 2022, https://www.businessinsider.com/ticketmaster-14-million-people-tried-buy-taylor-swift-presale-tickets-2022-11
+[^1]: Nguyen, Britney. “Ticketmaster expected 1.5 million 'verified' Taylor Swift fans on the site but 14 million people were trying to get tickets, Live Nation chairman says: 'We could have filled 900 stadiums'.” _Insider_, 17 Nov. 2022, https://www.businessinsider.com/ticketmaster-14-million-people-tried-buy-taylor-swift-presale-tickets-2022-11
 [^2]: `Wrk` is an HTTP benchmarking tool written in C known for efficiency. See repo at: https://github.com/wg/wrk
 [^3]: k6 benchmarking results for EC2 instance type `m5.large` https://github.com/grafana/k6-benchmarks/tree/master/results/v0.42.0#ec2-m5large
-[^4]: Lönn, Ragnar. "Open source load testing tool review 2020." *k6 Blog*, 3 Mar. 2020, https://k6.io/blog/comparing-best-open-source-load-testing-tools/#memory-usage-per-vu-level
+[^4]: Lönn, Ragnar. "Open source load testing tool review 2020." _k6 Blog_, 3 Mar. 2020, https://k6.io/blog/comparing-best-open-source-load-testing-tools/#memory-usage-per-vu-level
 [^5]: AWS product details for M5 EC2 instance types https://aws.amazon.com/ec2/instance-types/m5/
-[^6]: Ably. "What it takes to build a realtime chat or messaging app." *Ably Blog*, 23 Mar. 2023, https://ably.com/blog/what-it-takes-to-build-a-realtime-chat-or-messaging-app
-[^7]: Google, Inc. "The WebSocket Protocol." *Internet Engineering Task Force*, Dec 2011, https://www.rfc-editor.org/rfc/rfc6455
+[^6]: Ably. "What it takes to build a realtime chat or messaging app." _Ably Blog_, 23 Mar. 2023, https://ably.com/blog/what-it-takes-to-build-a-realtime-chat-or-messaging-app
+[^7]: Google, Inc. "The WebSocket Protocol." _Internet Engineering Task Force_, Dec 2011, https://www.rfc-editor.org/rfc/rfc6455
 [^8]: “Thundering herd problem.” Wikipedia, Wikimedia Foundation, 26 Nov. 2022, https://en.wikipedia.org/wiki/Thundering_herd_problem
-[^9]: Necheukhin, Anton. "Reliable load testing with regards to unexpected nuances." *Medium*, 29 Apr. 2020, https://medium.com/miro-engineering/reliable-load-testing-with-regards-to-unexpected-nuances-6f38c82196a5
-[^10]: Ramesh, Shreya. "Load Testing with Koi Pond." *Slack Engineering Blog*, Apr. 2022, https://slack.engineering/load-testing-with-koi-pond/
-[^11]: k6. "Load testing websites" *k6 Documentation*, https://k6.io/docs/testing-guides/load-testing-websites/#execution-considerations
-[^12]: “Batch Processing vs Real Time Data Streams.” *Confluent*, <https://www.confluent.io/learn/batch-vs-real-time-data-processing/>
-[^13]: Apache Software Foundation. "Apache JMeter Distributed Testing Step-by-step." *JMeter User Manual*, https://jmeter.apache.org/usermanual/jmeter_distributed_testing_step_by_step.html
-[^14]: Dingler, Lee, Lenz, Lopez, McGill, Nightingale. "Distributed Load Testing on AWS Implementation Guide." *Amazon Web Services, Inc.*, Mar. 2023, https://docs.aws.amazon.com/pdfs/solutions/latest/distributed-load-testing-on-aws/distributed-load-testing-on-aws.pdf
-[^15]: Google Cloud. "Distributed load testing using Google Kubernetes Engine." *Cloud Architecture Center Documentation*, 22 Apr. 2022, https://cloud.google.com/architecture/distributed-load-testing-using-gke
-[^16]: Pricing sources for various cloud testing tools: k6 (https://k6.io/pricing/), Grafana Cloud (https://grafana.com/pricing/?pg=k6-cloud&plcmt=pricing-details), BlazeMeter (https://www.blazemeter.com/pricing), Artillery (https://www.artillery.io/pricing)
-[^17]: Miric, Ivan. "Testing without limits: xk6 and k6 extensions." *k6 Blog*, 2 Dec. 2020, https://k6.io/blog/extending-k6-with-xk6/#how-xk6-works
-[^18]: Artillery. "Distributed tests on AWS Lambda." *Artillery Documentation*, https://www.artillery.io/docs/guides/guides/distributed-load-tests-on-aws-lambda
-[^19]: Locust. “Distributed load generation.” *Locust Documentation*, https://docs.locust.io/en/stable/running-distributed.html
-[^20]: Kubernetes. “Overview.” *Kubernetes Documentation*, https://kubernetes.io/docs/concepts/overview/
+[^9]: Necheukhin, Anton. "Reliable load testing with regards to unexpected nuances." _Medium_, 29 Apr. 2020, https://medium.com/miro-engineering/reliable-load-testing-with-regards-to-unexpected-nuances-6f38c82196a5
+[^10]: Ramesh, Shreya. "Load Testing with Koi Pond." _Slack Engineering Blog_, Apr. 2022, https://slack.engineering/load-testing-with-koi-pond/
+[^11]: k6. "Load testing websites" _k6 Documentation_, https://k6.io/docs/testing-guides/load-testing-websites/#execution-considerations
+[^12]: “Batch Processing vs Real Time Data Streams.” _Confluent_, <https://www.confluent.io/learn/batch-vs-real-time-data-processing/>
+[^13]: Apache Software Foundation. "Apache JMeter Distributed Testing Step-by-step." _JMeter User Manual_, https://jmeter.apache.org/usermanual/jmeter_distributed_testing_step_by_step.html
+[^14]: Dingler, Lee, Lenz, Lopez, McGill, Nightingale. "Distributed Load Testing on AWS Implementation Guide." _Amazon Web Services, Inc._, Mar. 2023, https://docs.aws.amazon.com/pdfs/solutions/latest/distributed-load-testing-on-aws/distributed-load-testing-on-aws.pdf
+[^15]: Google Cloud. "Distributed load testing using Google Kubernetes Engine." _Cloud Architecture Center Documentation_, 22 Apr. 2022, https://cloud.google.com/architecture/distributed-load-testing-using-gke
+[^16]: Pricing sources for various cloud testing tools: k6 (https://k6.io/pricing/), Grafana Cloud (https://grafana.com/pricing/?pg=k6-cloud&plcmt=pricing-details), BlazeMeter (https://www.blazemeter.com/pricing), Artillery (https://www.artillery.io/pricing), Gatling (https://gatling.io/pricing/#cloud-monthly)
+[^17]: Miric, Ivan. "Testing without limits: xk6 and k6 extensions." _k6 Blog_, 2 Dec. 2020, https://k6.io/blog/extending-k6-with-xk6/#how-xk6-works
+[^18]: Artillery. "Distributed tests on AWS Lambda." _Artillery Documentation_, https://www.artillery.io/docs/guides/guides/distributed-load-tests-on-aws-lambda
+[^19]: Locust. “Distributed load generation.” _Locust Documentation_, https://docs.locust.io/en/stable/running-distributed.html
+[^20]: Kubernetes. “Overview.” _Kubernetes Documentation_, https://kubernetes.io/docs/concepts/overview/
 [^21]: Deng, Głąb, Jones, Kahandi, Kantrowitz, Kinsella, Martin, Messer, Pellegrini, Schuetz, Seader, Strejevitch. "CNCF Operator [White Paper]." Cloud Native Computing Foundation, Jul. 2021, https://www.cncf.io/wp-content/uploads/2021/07/CNCF_Operator_WhitePaper.pdf
-[^22] Aronsson, Simon and Olha Yevtushenko. “Running distributed k6 tests on Kubernetes.” *K6 Blog*, 23 Jun. 2022, <https://k6.io/blog/running-distributed-tests-on-k8s/>
+[^22]: Aronsson, Simon and Olha Yevtushenko. “Running distributed k6 tests on Kubernetes.” _K6 Blog_, 23 Jun. 2022, <https://k6.io/blog/running-distributed-tests-on-k8s/>
 [^23]: k6 benchmarking results for EC2 instance type `m5.24xlarge` https://github.com/grafana/k6-benchmarks/tree/master/results/v0.42.0#rps-optimizedjs
-[^24]: k6. "Running large tests." *k6 Documentation*, https://k6.io/docs/testing-guides/running-large-tests/
-[^25]: Freedman, Mike and Erik Nordström. "Building a distributed time-series database on PostgreSQL." *Timescale Blog*, 21 Aug. 2019, https://www.timescale.com/blog/building-a-distributed-time-series-database-on-postgresql/
-[^26]: Malpass, Ian. "Measure Anything, Measure Everything." *Etsy: Code as Craft*, 11 Feb. 2015, https://www.etsy.com/codeascraft/measure-anything-measure-everything
-[^27]: "The main reason being that StatsD will max out at about 10K OPS (unless they've improved it recently) whereas Statsite will reach 10 MM. Also, look at the difference between the implementation of sets. StatsD uses a JS object versus statsite using a C implementation of HyperLogLog. If you're doing anything significant, you should not be using the node.js version of StatsD." Aimonetti, Matt. "Practical Guide to StatsD/Graphite Monitoring." *Y Hacker News*, comment by geetarista, 28 Jun. 2013, https://news.ycombinator.com/item?id=5958381
+[^24]: k6. "Running large tests." _k6 Documentation_, https://k6.io/docs/testing-guides/running-large-tests/
+[^25]: Freedman, Mike and Erik Nordström. "Building a distributed time-series database on PostgreSQL." _Timescale Blog_, 21 Aug. 2019, https://www.timescale.com/blog/building-a-distributed-time-series-database-on-postgresql/
+[^26]: Malpass, Ian. "Measure Anything, Measure Everything." _Etsy: Code as Craft_, 11 Feb. 2015, https://www.etsy.com/codeascraft/measure-anything-measure-everything
+[^27]: "The main reason being that StatsD will max out at about 10K OPS (unless they've improved it recently) whereas Statsite will reach 10 MM. Also, look at the difference between the implementation of sets. StatsD uses a JS object versus statsite using a C implementation of HyperLogLog. If you're doing anything significant, you should not be using the node.js version of StatsD." Aimonetti, Matt. "Practical Guide to StatsD/Graphite Monitoring." _Y Hacker News_, comment by geetarista, 28 Jun. 2013, https://news.ycombinator.com/item?id=5958381
 [^28]: "Count-min sketch." Wikipedia, Wikimedia Foundation, 9 Nov. 2022, https://en.wikipedia.org/wiki/Count%E2%80%93min_sketch
-[^29]: Kleppman, Martin. *Designing Data-Intensive Applications: The Big Ideas Behind Reliable, Scalable, and Maintainable Systems.* "O'Reilly Media, Inc.," 2017.
-[^30]: “WebSockets: Living Standard.” *WebSocket Specification*, 25 Oct. 2022, https://websockets.spec.whatwg.org/
-[^31]: Cailliau, Pieter and Lior Kogan. "t-digest: A New Probabilistic Data Structure in Redis Stack." *Redis Blog*, 14 Mar. 2023, https://redis.com/blog/t-digest-in-redis-stack/
+[^29]: Kleppman, Martin. _Designing Data-Intensive Applications: The Big Ideas Behind Reliable, Scalable, and Maintainable Systems._ "O'Reilly Media, Inc.," 2017.
+[^30]: “WebSockets: Living Standard.” _WebSocket Specification_, 25 Oct. 2022, https://websockets.spec.whatwg.org/
+[^31]: Cailliau, Pieter and Lior Kogan. "t-digest: A New Probabilistic Data Structure in Redis Stack." _Redis Blog_, 14 Mar. 2023, https://redis.com/blog/t-digest-in-redis-stack/
 [^32]: Kubernetes Dashboard is a general purpose, web-based UI for Kubernetes clusters. It allows users to manage applications running in the cluster and troubleshoot them, as well as manage the cluster itself. See repo at: https://github.com/kubernetes/dashboard
