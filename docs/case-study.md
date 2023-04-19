@@ -20,21 +20,27 @@ What happens when a web application gets more traffic than anticipated? Can the 
 
 <!-- markdownlint-disable MD033 -->
 
-import Placeholder from './assets/logo-light-green.png';
+import Ticketmaster from './assets/ticketmaster.png';
 
-<div class="text--center" >
-  <img src={Placeholder} width="400"/>
-  <p>Figure 2.1: Tweet of Ticketmaster going down due to high traffic</p>
-</div>
+<figure>
+  <img src={Ticketmaster} alt="Tweet from Ticketmaster about cancelling a sales event since their site crashed due to high volumes of user traffic"/>
+  <figcaption align = "center" >
+    Figure 2.1: A tweet from Ticketmaster when the site crashed due to high traffic
+  </figcaption>
+</figure>
 
 Experiencing slow websites, downtime, or other issues due to excessive traffic is a frustrating reality for many internet users. Whether it's a popular online sales event like Black Friday or a highly anticipated concert, the surge of visitors to a website can cause it to slow down or even crash. Ticketmaster found out just how bad things could get when 14 million users tried to buy Taylor Swift tickets and crashed their site[^1].
 
 To ensure their application can handle this kind of situation, developers re-create high-traffic scenarios by performing load tests. **Load testing** is the process of simulating realistic end-user behavior in large volumes and measuring how the target server responds. In a load test, a number of programmatically generated "virtual users" are automated to interact with the target server in predefined patterns. This process helps developers identify performance bottlenecks within a system and ensures that user experience won't be negatively impacted, even under heavy strain.
 
-<div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
-  <p>Figure 2.2: A simple load tester (API Blaster)</p>
-</div>
+import ApiBlaster from './assets/apiBlaster.png';
+
+<figure>
+  <img src={ApiBlaster} alt="Diagram of a simple load tester that sends a lot of consecutive http requests"/>
+  <figcaption align = "center" >
+    Figure 2.2: A simple load tester (API Blaster)
+  </figcaption>
+</figure>
 
 One way to perform a basic load test is to use an HTTP benchmarking tool, like `wg/wrk`.[^2] This involves sending frequent HTTP requests to a target endpoint to simulate large amounts of traffic and monitoring the system’s response.
 
@@ -58,10 +64,14 @@ There are three main limiting factors to load testing on a local machine:
 
 If local resources do not allow a developer to reach the desired number of virtual users, then it's necessary to run a distributed load test. In a **distributed load test** multiple hosts generate load. The hosts which create virtual users and run the test are often known as "load generator nodes" or "test runner nodes". These can be horizontally scaled to support the number of virtual users required.
 
-<div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
-  <p>Figure 2.3: A distributed load test where multiple hosts are spinning up virtual users to generate load, and collect response data</p>
-</div>
+import DistributedLoadTest from './assets/distributedLoadTest.png';
+
+<figure>
+  <img src={DistributedLoadTest} alt="Diagram of multiple machines generating virtual users in a distributed load test load"/>
+  <figcaption align = "center" >
+    Figure 2.3: A distributed load test where multiple hosts are spinning up virtual users to generate load, and collecting response data
+  </figcaption>
+</figure>
 
 #### ii. Protocol
 
@@ -86,17 +96,25 @@ To deal with this, developers perform data smoothing, which involves some kind o
 
 For example, both scenarios below have an average HTTP response time of two seconds, which represents a poor user experience. However, the experience of the majority of users across these scenarios is not the same. In scenario A, the majority of users have acceptable HTTP response times of less than half a second. In this case, a single outlier is skewing the average result. In scenario B, however, all users have an HTTP response time greater than one second, indicating a poor user experience across the board.
 
-<div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
-  <p>Figure 2.4: The “average” is often not descriptive of the user experience</p>
-</div>
+import AverageScenarios from './assets/avgScenarios.png';
+
+<figure>
+  <img src={AverageScenarios} alt="Two scenarios demonstrating how the average is not necessarily indicative of the majority of user experience"/>
+  <figcaption align = "center" >
+    Figure 2.4: The "average" is often not descriptive of the user experience
+  </figcaption>
+</figure>
 
 Because the average is often unreliable, it can be more effective to look at percentiles. For example, if the 50th percentile, also known as the median, is 500ms then developers know 50% of response times were lower than 500ms, and 50% were higher. Looking at the “tail end” (>90%) of percentiles can provide information about the worst-case performance scenarios. If the 90th percentile of response times is 1,800ms, it means that 10% of users have response times greater than 1,800ms. The experience of these users would not be apparent when looking at the median alone.
 
-<div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
-  <p>Figure 2.3: Right-skewed distribution of HTTP response times</p>
-</div>
+import RightSkewed from './assets/rightSkewed.png';
+
+<figure>
+  <img src={RightSkewed} alt="Diagram of a right-skewed distribution of HTTP response times"/>
+  <figcaption align = "center" >
+    Figure 2.5: Right-skewed distribution of HTTP response times
+  </figcaption>
+</figure>
 
 Therefore, it’s important to consider both the metrics that are being collected by the load test as well as how they’re being summarized.
 
@@ -121,10 +139,14 @@ Another drawback is that summaries are only generated at the end of a test. For 
 
 An alternative to end-of-test summaries is to use a visualization dashboard. These dashboards display data against a time axis, allowing the developers to have a better understanding of the data. For example, the graph below can be used to pinpoint the specific time system performance shifts, which occurs at about the three minute mark.
 
-<div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
-  <p>Figure 2.4: Example of a data visualization dashboard</p>
-</div>
+import PlotMetricsVsTime from './assets/plotMetricsVsTime.png';
+
+<figure>
+  <img src={PlotMetricsVsTime} alt="Graph of metrics plotted against time collected"/>
+  <figcaption align = "center" >
+    Figure 2.6: Example of a near real-time data visualization dashboard
+  </figcaption>
+</figure>
 
 Moreover, these dashboards often display data in near real-time, allowing developers to react to live results as they occur. Depending on the nature of the load test, developers might either scale up server resources to handle the additional load or stop the test.
 
@@ -152,10 +174,14 @@ All of these tools benefit from low-latency data transfer (~100ms)[^6] and the a
 
 **WebSocket** is a protocol that operates over HTTP and uses the underlying TCP layer to create a persistent connection between client and server.[^7] Unlike HTTP, where the client must initiate communication with the server by first sending a request, WebSockets enables bi-direction communication between client and server. Although a WebSocket connection is initially established via an HTTP request, the protocol is subsequently updated to a persistent connection, allowing the server to stream events back to the client in real time.
 
-<div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
-  <p>Figure 3.1: The difference between an HTTP and Websocket connection</p>
-</div>
+import httpVsWebSocket from './assets/wsVsHttp.png';
+
+<figure>
+  <img src={httpVsWebSocket} alt="Diagram showing the difference between an HTTP and WebSocket connection"/>
+  <figcaption align = "center" >
+    Figure 3.1: The difference between an HTTP and WebSocket connection. WebSockets creates a bi-directional sustained connection.
+  </figcaption>
+</figure>
 
 On the client side, a browser relies on a WebSocket object to facilitate this persistent connection. The WebSocket object uses event-based asynchronous callbacks to handle incoming messages from the server, and it can also send messages directly to the server. WebSocket messages, unlike HTTP requests, don't require a response.
 
@@ -185,9 +211,11 @@ For example, if a user sends a message to a Slack channel with 1k subscribers, t
 
 This could lead to a large amount of fan-out where the WebSocket server might be required to send out one million messages (1k likes times 1k clients). Since all of this is supposed to be happening in real-time, all of the messages need to be sent out very quickly. This can place a significant burden on the WebSocket server, since it needs to accomplish all this work in a short period of time.
 
+import Fanout from './assets/Fanout.gif';
+
 <div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
-  <p>Figure 3.2: Depiction of fanout</p>
+  <img src={Fanout} alt="Gif demonstrating fanout"/>
+  <p>Figure 3.2 Depiction of fanout</p>
 </div>
 
 <!-- markdownlint-disable MD024 -->
@@ -211,23 +239,27 @@ A load testing tool built for these types of applications should have a certain 
 
 Typically, the HTTP server and WS server need to be tested in tandem to get an accurate picture of how the system responds to load from real end-users. For applications that only support HTTP endpoints, an HTTP load tester is sufficient. However, collaboration apps cannot rely on HTTP requests alone for load testing, since client traffic is divided between two different protocols. HTTP-focused load tests do not cover all components of a collaboration app’s architecture.
 
-<div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
-  <p>Figure 4.1: A load test using an HTTP API blaster only tests part of the system and doesn’t test any real time services that rely on WebSockets</p>
-</div>
+import HttpOnly from './assets/httpOnlyTest.png';
+
+<figure>
+  <img src={HttpOnly} alt="Diagram showing that a load test that only tests the HTTP protocol doesn't comprehensively test an application that has real time services that use the WebSocket protocol"/>
+  <figcaption align = "center" >
+    Figure 4.1: A load test using an HTTP API blaster only tests part of the system and doesn't test any real time services that rely on WebSockets
+  </figcaption>
+</figure>
 
 In an HTTP load test, requests are sent to the HTTP server. In response, this causes data to be sent to the WebSocket server so that published messages can be propagated to subscribed end-users. However, if the virtual users in the load test do not maintain persistent WebSocket connections, the WebSocket server never has to emit any messages (since there are no active subscribers). This means that a critical part of the architecture never has to sustain any load.
 
 Due to fan-out messaging, the number of WebSocket messages that must be sent (and therefore, the amount of load the WebSocket server must sustain) can be orders of magnitude different from the number of HTTP requests being received. It is important that the virtual users in the load test accurately simulate the persistently connected WebSocket clients.
 
-<!-- markdownlint-disable MD033 -->
+import HttpWs from './assets/wsAndHttpTest.png';
 
-import fullCoverage from './assets/4-a-full-coverage.png';
-
-<div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
-  <p>Figure 4.2: A system can be tested holistically if the load tester has virtual users that can establish persistent Websocket connections</p>
-</div>
+<figure>
+  <img src={HttpWs} alt="Diagram showing that a load test that simulates HTTP and WebSockets traffic will comprehensively test an application that uses both of those protocols"/>
+  <figcaption align = "center" >
+    Figure 4.2: A system can be tested holistically if the load tester has virtual users that can establish persistent Websocket connections
+  </figcaption>
+</figure>
 
 ### b. Scaling to 100K+ concurrent users
 
@@ -239,19 +271,25 @@ One of the major concerns with distributed load testing involves the synchroniza
 
 In the example below, both load generators are ramping up to a peak load of 10k virtual users, and since the tests are synchronized they will reach a combined peak of 20k virtual users for the load test.
 
-import peakLoad from './assets/4-b-peak-load.png';
+import peakLoadSync from './assets/peakLoad.png';
 
-<div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
-  <p>Figure 4.3: A synchronized load test</p>
-</div>
+<figure>
+  <img src={peakLoadSync} alt="Diagram of distributed load generators being synchronized and therefore able to simulate the desired peak load"/>
+  <figcaption align = "center" >
+    Figure 4.3: A synchronized load test
+  </figcaption>
+</figure>
 
 However, if one of the load generators is out of sync, the overall test will never hit the peak load of 20k virtual users.
 
-<div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
-  <p>Figure 4.4: An unsynchronized load test</p>
-</div>
+import peakLoadUnsync from './assets/peakLoadUnsynch.png';
+
+<figure>
+  <img src={peakLoadUnsync} alt="Diagram of distributed load generators being unsynchronized and therefore unable to simulate the desired peak load"/>
+  <figcaption align = "center" >
+    Figure 4.4: An unsynchronized load test
+  </figcaption>
+</figure>
 
 This is a major issue, especially if developers are trying to test for a specific load that never gets simulated. Therefore, an effective load testing tool needs a way to synchronize load generator nodes to ensure they all start ramping up the load at the same time. Without such a synchronization mechanism, there is no way to guarantee the load test is simulating the predefined pattern of user load.
 
@@ -271,10 +309,14 @@ A near real-time load-testing dashboard allows developers to monitor load test r
 
 To facilitate this near real-time visualization of data, the load testing tool should perform stream processing rather than batch processing. Batch processing presupposes the data has a defined start and finish, meaning that batch processing delivers results like end-of-test summaries.[^12] This does not allow developers to act upon results while the load test is running.
 
-<div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
-  <p>Figure 4.5: To facilitate near time visualization, load testers require stream processing instead of batch processing.</p>
-</div>
+import Stream from './assets/stream.png';
+
+<figure>
+  <img src={Stream} alt="Diagram of stream processing engine for visualizing data in near real-time"/>
+  <figcaption align = "center" >
+    Figure 4.5: To facilitate near real-time visualization, load testers require stream processing instead of batch processing
+  </figcaption>
+</figure>
 
 Stream processing, on the other hand, assumes data is unbound and arrives continually over time.[^12] To derive analytics like percentiles from a data stream, the system splits data up into time intervals. All the data points that fit into one of these “windows” are aggregated and sent to storage. This comes with challenges of its own.
 
@@ -292,10 +334,14 @@ It is possible to use an open-source tool in a distributed manner, but it involv
 
 This approach, however, involves significant complexity. Many open-source load testing tools offer managed cloud-based services that abstract away all the challenges of distribution. While this is a convenient option, it does come with limitations such as lack of data ownership and high cost.
 
-<div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
-  <p>Figure 5.1: Edamame falls in the middle of the two levels of abstraction.</p>
-</div>
+import abstractionLevels from './assets/abstractionLevels.png';
+
+<figure>
+  <img src={abstractionLevels} alt="Diagram demonstrating how Edamame lies in the middle of a spectrum ranging from managed cloud-based serverices and self-hosted DIY tools"/>
+  <figcaption align = "center" >
+    Figure 5.1: Edamame falls in between the two levels of abstraction
+  </figcaption>
+</figure>
 
 Edamame is one of a few solutions that belong between the two different levels of abstraction of self-hosted DIY tools and managed cloud-based services. It provides a load testing tool with built-in distribution management that's simple to deploy and run.
 
@@ -303,10 +349,14 @@ Edamame is one of a few solutions that belong between the two different levels o
 
 Several real-world collaborative apps have taken a DIY approach to either develop a custom load testing tool or extend an existing open-source tool and manage the distribution.
 
-<div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
-  <p>Figure 5.1: Slack's DIY tool for load testing called “Koi Pond”</p>
-</div>
+import KoiPond from './assets/koiPond.png';
+
+<figure>
+  <img src={KoiPond} alt="Diagram of using of Koi Pond, a DIY load testing tool built by Slack"/>
+  <figcaption align = "center" >
+    Figure 5.2: Slack's DIY tool for load testing called "Koi Pond"
+  </figcaption>
+</figure>
 
 Slack built Koi Pond[^10], which is an internal tool that leverages a distributed Kubernetes architecture to ensure sufficient connected virtual users. Load is generated using a custom tool written in Go, and virtual user behavior is dictated by a JSON file. Koi Pond streams data which is displayed in a Grafana dashboard as a test runs.
 
@@ -322,10 +372,14 @@ If a developer does not wish to manage the complexity involved with a distribute
 
 That being said, cloud-based solutions also have their trade-offs. They can be very costly.[^16] Moreover, because all data storage is managed, users do not retain control over their own data. Different cloud-based solutions will place different limits on how long data is retained.
 
-<div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
-  <p>Figure 5.3: A comparison of cloud-based solutions</p>
-</div>
+import CloudOptions from './assets/cloudOptions.png';
+
+<figure>
+  <img src={CloudOptions} alt="Chart comparing existing cloud-based load testing solutions"/>
+  <figcaption align = "center" >
+    Figure 5.3: Comparison of cloud-based solutions
+  </figcaption>
+</figure>
 
 [^16]
 
@@ -341,10 +395,14 @@ Gatling Enterprise’s licensed tool is another example of a self-hosted solutio
 
 Edamame lives in the liminal space between a DIY and a SaaS solution. It’s open-source and provides many of the benefits of a cloud-based service such as managed distribution and near real-time data visualization. It also addresses the primary limitation of these services by giving users full control over their data. Edamame is built with collaboration apps in mind and features meaningful metrics for both HTTP and WebSockets out of the box.
 
-<div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
-  <p>Figure 5.4: Comparing Edamame with open-source and cloud-based load testing tools</p>
-</div>
+import EdamameVsAll from './assets/chartEdamameVs.png';
+
+<figure>
+  <img src={EdamameVsAll} alt="Chart comparing Edamame with open-source and cloud-based load testing tools"/>
+  <figcaption align = "center" >
+    Figure 5.4: Comparing Edamame with open-source and cloud-based load testing tools
+  </figcaption>
+</figure>
 
 Edamame is a specific tool built for a specific use case, so it has limitations as well. Applications that need to support high levels of concurrency may not wish to utilize Edamame, as it does not support more than 200k virtual users per test. Edamame does not integrate into a CI/CD pipeline like GitHub Actions or Jenkins. Because Edamame targets collaborative apps, it does not support protocols outside HTTP and WebSockets.
 
@@ -356,10 +414,14 @@ Edamame has three major components:
 2. The **Data Handling** component is responsible for receiving, processing, and storing the data emitted by the load generation component.
 3. The **Data Visualization** component provides a custom dashboard that allows for meaningful analysis of test results in near real-time.
 
-<div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
-  <p>Figure 6.1: Edamame architecture</p>
-</div>
+import EdamameArchitecture from './assets/edamameArchitecture.png';
+
+<figure>
+  <img src={EdamameArchitecture} alt="Diagram of Edamame's architecture"/>
+  <figcaption align = "center" >
+    Figure 6.1: Edamame architecture
+  </figcaption>
+</figure>
 
 Edamame runs on Amazon Web Services, or AWS. Before the user can run any tests, all the necessary infrastructure is deployed to their AWS account.
 
@@ -371,10 +433,14 @@ Once the test is complete, test runner and data pipeline components are scaled b
 
 We’ll start off by talking about the “Load Generation” component of our architecture, which involves generating load and coordinating distributed load tests.
 
-<div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
-  <p>Figure 7.1:  Load generation component of the Edamame architecture</p>
-</div>
+import LoadGenerators from './assets/edamameLoadGenerators.png';
+
+<figure>
+  <img src={LoadGenerators} alt="Diagram of Edamame's architecture with the load generation component highlighted"/>
+  <figcaption align = "center" >
+    Figure 7.1:  Load generation component of the Edamame architecture
+  </figcaption>
+</figure>
 
 ### a. Scaling to 100k+ virtual users
 
@@ -392,10 +458,14 @@ In terms of performance, because Edamame needs to support more than 100k virtual
 - CPU efficiency corresponds to Requests Per Second (RPS). A high RPS means less CPU is utilized per request, so requests can be sent at a faster rate.
 - RAM usage is determined by how much memory is required per virtual user. The less memory consumed per VU, the greater the number of VUs that can be supported by a single host.
 
-<div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
-  <p>Figure 7.2: Comparison of open-source load testing tools</p>
-</div>
+import OpenSourceTools from './assets/chartOpenSourceTools.png';
+
+<figure>
+  <img src={OpenSourceTools} alt="Chart comparing open-source load testing tools"/>
+  <figcaption align = "center" >
+    Figure 7.2: Comparison of open-source load testing tools
+  </figcaption>
+</figure>
 
 [^4]
 
@@ -419,10 +489,14 @@ To leverage the k6 operator for synchronizing load tests, Edamame deploys its in
 
 When a user runs a load test with Edamame, they provide a test script which defines a quantity of virtual users and their behavior. This test script is applied to the EKS cluster as a configuration value that Kubernetes makes available to any containers running within the cluster. The k6 operator accesses the test script and manages the execution of the test.
 
-<div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
-  <p>Figure 7.3:  The K6 operator simplifies the process of synchronizing load tests</p>
-</div>
+import Operator from './assets/k6Op.png';
+
+<figure>
+  <img src={Operator} alt="Diagram of k6 Operator performing essential functions for synchronizing load tests"/>
+  <figcaption align = "center" >
+    Figure 7.3:  The K6 operator simplifies the process of synchronizing load tests
+  </figcaption>
+</figure>
 
 1. First, the operator creates a new component called the initializer. This is a program that performs error handling (e.g. it checks the validity of the test script).
 2. Next, the operator creates test runners. These encapsulate the k6 load testing application and are responsible for accessing the test script, generating the load, and running the test.
@@ -450,10 +524,14 @@ Edamame sets a default value of 20k virtual users per runner, but provides the o
 
 Next, we’ll talk about the “data handling” component of our architecture, which involves stream processing 1M+ data points per second.
 
-<div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
-  <p>Figure 8.1: Data handling component of the Edamame architecture</p>
-</div>
+import DataHandlers from './assets/edamameDataHandling.png';
+
+<figure>
+  <img src={DataHandlers} alt="Diagram of Edamame's architecture with the data handling component highlighted"/>
+  <figcaption align = "center" >
+    Figure 8.1: Data handling component of the Edamame architecture
+  </figcaption>
+</figure>
 
 ### a. Processing 1M data points per second
 
@@ -483,10 +561,14 @@ We cannot aggregate metrics that we want to summarize with percentiles, such as 
 
 If we take the response times from each runner, find the 99th percentile, and then average them across runners, we’re not guaranteed to get the correct value, especially if a specific runner is for some reason receiving much faster or slower response times.
 
-<div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
-  <p>Figure 8.2: The problem with aggregating percentile metrics across machines</p>
-</div>
+import PercentileAggIssue from './assets/avgPercentileIssue.png';
+
+<figure>
+  <img src={PercentileAggIssue} alt="Example calculations demonstrating how averaging percentiles can lead to inaccurate results"/>
+  <figcaption align = "center" >
+    Figure 8.2: The problem with aggregating percentile metrics across machines
+  </figcaption>
+</figure>
 
 To ensure the aggregated percentile value is correct, it needs to be calculated with the entire data set. Based on these considerations, we ultimately decided to use a centralized stream processing server to aggregate load testing data in a single location. This would ingest data output by the test runners and output aggregated data points to the database on predetermined time windows known as “flush intervals”.
 
@@ -498,10 +580,14 @@ StatsD is a server and protocol developed by Etsy for large-scale centralized da
 
 Statsite uses a single core with an event loop to handle much more data than the original StatsD server. It's also highly efficient when it comes to data aggregation. Trend based data points (e.g. HTTP response time) are aggregated into the specified percentiles using the count-min sketch,[^28] a probabilistic data structure that is much faster than sorting all of the raw data to arrive at the needed percentile. Probabilistic data structures like this allow us to "calculate a good approximation of percentiles at minimal CPU and memory cost" (Kleppman).[^29]
 
-<div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
-  <p>Figure 8.3: Stream processing using a Statsite server (built on the StatsD protocol)</p>
-</div>
+import DataPipeline from './assets/dataPipeline.png';
+
+<figure>
+  <img src={DataPipeline} alt="Diagram of stream processing data pipeline that uses a Statsite server to aggregate data"/>
+  <figcaption align = "center" >
+    Figure 8.3: Stream processing using a Statsite server (built on the StatsD protocol)
+  </figcaption>
+</figure>
 
 Overall, using Statsite allows Edamame to significantly minimize the number of database writes per second. For example, if the load test tracks 20 metrics, the result is 20 writes per five-second flush interval.
 
@@ -511,10 +597,14 @@ Since the data aggregation pipeline was able to minimize the number of writes pe
 
 Finally, we’ll talk about the “data visualization” component of our architecture, which involves visualizing important data for both HTTP and WebSockets.
 
-<div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
-  <p>Figure 9.1: Data visualization component of the Edamame architecture</p>
-</div>
+import DataVis from './assets/edamameDataVisualization.png';
+
+<figure>
+  <img src={DataVis} alt="Diagram of Edamame's architecture with the data visualization component highlighted"/>
+  <figcaption align = "center" >
+    Figure 9.1: Data visualization component of the Edamame architecture
+  </figcaption>
+</figure>
 
 ### a. Extracting meaningful insights
 
@@ -524,7 +614,7 @@ Edamame uses Grafana because it is open source, easy to use, and highly flexible
 
 <div class="text--center" >
   <img src="https://user-images.githubusercontent.com/76174119/228081016-e669dc4d-d1ce-4483-8924-b72ab8c3d1cb.png" alt="Example banner" width="700"/>
-  <p>Figure 9.2: Grafana HTTP dashboard</p>
+  <p>Figure 9.2: Edamame's custom Grafana HTTP dashboard</p>
 </div>
 
 After setting up Grafana for data visualization, it became clear that k6 was missing a number of metrics that would have been useful in measuring the performance of a WebSocket server.
@@ -586,19 +676,27 @@ To allow users to write test scripts that more closely mirror the client-side co
 
 Edamame’s custom k6 extension is packaged into the k6 binary that runs on the load generators. The custom metrics are then emitted into the data pipeline, and written to the database. This enables Edamame to visualize how WebSocket and HTTP servers are performing under heavy load in tandem.
 
-<div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="400"/>
-  <p>Figure 9.3: Edamame’s custom K6 extension</p>
-</div>
+import GoExtension from './assets/goExtension.png';
+
+<figure>
+  <img src={GoExtension} alt="Diagram of Edamame's architecture with the data visualization component highlighted"/>
+  <figcaption align = "center" >
+    Figure 9.3: Edamame's custom K6 extension
+  </figcaption>
+</figure>
 
 Edamame configures a default custom-dashboard for users that features these additional metrics. The dashboard is specifically designed to show WebSocket metrics in conjunction with HTTP. Since Grafana dashboards are defined using SQL queries, the user can easily customize the default dashboard or create dashboards of their own.
 
 <div class="text--center" >
-  <img src="https://user-images.githubusercontent.com/76174119/228081027-62238425-b004-482c-b3c7-a11c97411b50.png" alt="Example banner" width="700"/>
-</div>
-
-<div class="text--center" >
-  <img src="https://user-images.githubusercontent.com/76174119/228081016-e669dc4d-d1ce-4483-8924-b72ab8c3d1cb.png" alt="Example banner" width="700"/>
+  <img 
+    src="https://user-images.githubusercontent.com/76174119/228081027-62238425-b004-482c-b3c7-a11c97411b50.png" alt="Example banner" 
+    width="700"
+  />
+  <img 
+    src="https://user-images.githubusercontent.com/76174119/228081016-e669dc4d-d1ce-4483-8924-b72ab8c3d1cb.png" alt="Example banner" 
+    width="700"
+  />
+  <p>Figure 9.4: Edamame's custom Grafana dashboard for viewing HTTP and WebSocket metrics</p>
 </div>
 
 ## 10. Future plans
