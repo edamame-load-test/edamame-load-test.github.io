@@ -179,7 +179,7 @@ import httpVsWebSocket from './assets/wsVsHttp.png';
 <figure>
   <img src={httpVsWebSocket} alt="Diagram showing the difference between an HTTP and WebSocket connection"/>
   <figcaption align = "center" >
-    Figure 3.1: The difference between an HTTP and WebSocket connection. WebSockets creates a bi-directional sustained connection.
+    Figure 3.1: The difference between an HTTP and WebSocket connection. WebSockets creates a bi-directional persistent connection.
   </figcaption>
 </figure>
 
@@ -215,7 +215,7 @@ import Fanout from './assets/Fanout.gif';
 
 <div class="text--center" >
   <img src={Fanout} alt="Gif demonstrating fanout"/>
-  <p>Figure 3.2 Depiction of fanout</p>
+  <p>Figure 3.2 Depiction of fan-out</p>
 </div>
 
 <!-- markdownlint-disable MD024 -->
@@ -244,7 +244,7 @@ import HttpOnly from './assets/httpOnlyTest.png';
 <figure>
   <img src={HttpOnly} alt="Diagram showing that a load test that only tests the HTTP protocol doesn't comprehensively test an application that has real time services that use the WebSocket protocol"/>
   <figcaption align = "center" >
-    Figure 4.1: A load test using an HTTP API blaster only tests part of the system and doesn't test any real time services that rely on WebSockets
+    Figure 4.1: A load test simulating HTTP traffic alone only tests part of the system and doesn't test any real-time services that rely on WebSockets
   </figcaption>
 </figure>
 
@@ -400,7 +400,7 @@ import EdamameVsAll from './assets/chartEdamameVs.png';
 <figure>
   <img src={EdamameVsAll} alt="Chart comparing Edamame with open-source and cloud-based load testing tools"/>
   <figcaption align = "center" >
-    Figure 5.4: Comparing Edamame with open-source and cloud-based load testing tools
+    Figure 5.4: Comparing Edamame with DIY and managed cloud-based load testing tools
   </figcaption>
 </figure>
 
@@ -494,7 +494,7 @@ import Operator from './assets/k6Op.png';
 <figure>
   <img src={Operator} alt="Diagram of k6 Operator performing essential functions for synchronizing load tests"/>
   <figcaption align = "center" >
-    Figure 7.3:  The K6 operator simplifies the process of synchronizing load tests
+    Figure 7.3:  The k6 operator simplifies the process of synchronizing load tests
   </figcaption>
 </figure>
 
