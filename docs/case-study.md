@@ -1,6 +1,6 @@
 # Case Study
 
-## 1. What is Edamame?
+## What is Edamame?
 
 Edamame is an open-source, distributed load testing framework, optimized for real-time collaboration apps that use both HTTP and WebSockets. It comes with a CLI and React GUI that enables developers to easily self-host cloud-based architecture on AWS. Edamame supports tests of up to 200k virtual users, visualizes data in near real-time, and includes a stop functionality allowing developers to end their tests early.
 
@@ -46,7 +46,7 @@ While this is a simple approach to load testing, more complexities arise when a 
 
 ### b. Considerations when building a load tester
 
-#### i. Scale
+#### Scale
 
 Running load tests locally is limiting. It's difficult to simulate thousands of separate users on a single host. For example, a load testing tool with a fairly low memory footprint used on a 2-core CPU host with 8GB of RAM can generate a maximum of about 6k virtual users.[^3]
 

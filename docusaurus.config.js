@@ -1,45 +1,47 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
-const lightCodeTheme = require('prism-react-renderer/themes/github');
-const darkCodeTheme = require('prism-react-renderer/themes/dracula');
+const lightCodeTheme = require("prism-react-renderer/themes/github");
+const darkCodeTheme = require("prism-react-renderer/themes/dracula");
+const pathBrowserify = require("path-browserify");
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'Edamame',
-  tagline: 'A load generator for HTTP and WS',
-  favicon: 'img/favicon.ico',
+  title: "Edamame",
+  tagline: "A load generator for HTTP and WS",
+  favicon: "img/favicon.ico",
 
   // Set the production url of your site here
-  url: 'https://edamame-load-test.github.io',
+  url: "https://edamame-load-test.github.io",
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/',
+  baseUrl: "/",
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'edamame-load-test', // Usually your GitHub org/user name.
-  projectName: 'edamame-load-test.github.io', // Usually your repo name.
+  organizationName: "edamame-load-test", // Usually your GitHub org/user name.
+  projectName: "edamame-load-test.github.io", // Usually your repo name.
   trailingSlash: false,
 
-  onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
+  onBrokenLinks: "throw",
+  onBrokenMarkdownLinks: "warn",
 
   // Even if you don't use internalization, you can use this field to set useful
   // metadata like html lang. For example, if your site is Chinese, you may want
   // to replace "en" with "zh-Hans".
   i18n: {
-    defaultLocale: 'en',
-    locales: ['en'],
+    defaultLocale: "en",
+    locales: ["en"],
   },
 
   presets: [
     [
-      'classic',
+      "classic",
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
-          sidebarPath: require.resolve('./sidebars.js'),
+          sidebarPath: require.resolve("./sidebars.js"),
+          routeBasePath: "/",
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           // editUrl:
@@ -47,79 +49,98 @@ const config = {
         },
         blog: false,
         theme: {
-          customCss: require.resolve('./src/css/custom.css'),
+          customCss: require.resolve("./src/css/custom.css"),
         },
       }),
     ],
+  ],
+
+  plugins: [
+    async function myPlugin(context, options) {
+      return {
+        name: "docusaurus-tailwindcss",
+        configurePostCss(postcssOptions) {
+          // Appends TailwindCSS and AutoPrefixer.
+          postcssOptions.plugins.push(require("tailwindcss"));
+          postcssOptions.plugins.push(require("autoprefixer"));
+          return postcssOptions;
+        },
+      };
+    },
   ],
 
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       // Replace with your project's social card
-      image: 'img/edamame-social-card.png',
+      colorMode: {
+        defaultMode: "light",
+        disableSwitch: true,
+      },
+      image: "img/edamame-social-card.png",
       navbar: {
-        title: 'Edamame',
-        logo: {
-          alt: 'Edamame Logo',
-          src: 'img/logo.jpg',
-        },
+        hideOnScroll: true,
+        title: "Edamame",
         items: [
           {
-            type: 'doc',
-            docId: 'case-study',
-            position: 'left',
-            label: 'Case Study',
+            type: "doc",
+            docId: "case-study",
+            position: "right",
+            label: "Case Study",
           },
           {
-            type: 'doc',
-            docId: 'docs',
-            position: 'left',
-            label: 'Docs',
+            type: "doc",
+            docId: "docs",
+            position: "right",
+            label: "Docs",
           },
           {
-            href: 'https://github.com/facebook/docusaurus',
-            label: 'GitHub',
-            position: 'right',
+            href: "/#team",
+            label: "Team",
+            position: "right",
+          },
+          {
+            href: "https://github.com/facebook/docusaurus",
+            label: "GitHub",
+            position: "right",
           },
         ],
       },
       footer: {
-        style: 'dark',
+        style: "dark",
         links: [
           {
-            title: 'Docs',
+            title: "Edamame",
+            items: [],
+          },
+          {
+            title: "Navigation",
             items: [
+              {
+                label: "Case Study",
+                href: "/case-study",
+              },
+              {
+                label: "Documentation",
+                href: "/Docs",
+              },
+              {
+                label: "Live Presentation",
+                href: "https://www.youtube.com/watch?v=VZun0GQaSLY",
+              },
             ],
           },
           {
-            title: 'Community',
+            title: "More",
             items: [
               {
-                label: 'Stack Overflow',
-                href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-              },
-              {
-                label: 'Discord',
-                href: 'https://discordapp.com/invite/docusaurus',
-              },
-              {
-                label: 'Twitter',
-                href: 'https://twitter.com/docusaurus',
-              },
-            ],
-          },
-          {
-            title: 'More',
-            items: [
-              {
-                label: 'GitHub',
-                href: 'https://github.com/facebook/docusaurus',
+                label: "GitHub",
+                href: "https://github.com/edamame-load-test/edamame",
               },
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} Edamame Load Testing`,
       },
       prism: {
         theme: lightCodeTheme,
@@ -127,7 +148,7 @@ const config = {
       },
       tableOfContents: {
         minHeadingLevel: 2,
-        maxHeadingLevel: 4,
+        maxHeadingLevel: 3,
       },
     }),
 };
