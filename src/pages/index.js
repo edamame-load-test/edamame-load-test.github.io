@@ -120,11 +120,11 @@ export default function Home() {
                   Distributed load tests
                 </p>
                 <h1 className="text-4xl md:text-[44px] font-medium tracking-tight leading-tight md:leading-[52px] mt-2">
-                  Write load tests in K6 and distribute with K8s
+                  Write load tests using k6 and distribute with K8s
                 </h1>
                 <p className="text-xl text-gray-600 mt-2 leading-relaxed">
-                  Define your load tests in javascript using K6, and run
-                  distributed tests using K6 Kubernetes operator.{" "}
+                  Define your load tests in JavaScript using k6, and run
+                  distributed tests using the k6 Kubernetes operator.{" "}
                 </p>
                 <img
                   src="/img/test-script.svg"
@@ -163,7 +163,7 @@ export default function Home() {
                   Edamame automatically spins up AWS infrastructure and runs
                   load tests on EC2 instances running in EKS. You keep 100%
                   control of your data, and only pay for the AWS resources you
-                  use
+                  use.
                 </p>
                 <div className="sm:w-[80%]">
                   <img
@@ -193,8 +193,8 @@ export default function Home() {
                   Use the CLI or GUI to manage your tests
                 </h1>
                 <p className="text-xl text-gray-600 mt-2 leading-relaxed">
-                  Our React-based GUI allows you to start a test, open
-                  dashboards in Grafana, and stop tests as they’re running
+                  Our React-based GUI allows you to start a test, open Grafana
+                  dashboards to visualize test metrics, and optionally end tests early.
                 </p>
                 <Link
                   href="/docs"
@@ -221,8 +221,8 @@ export default function Home() {
             />
             <div className="border-cyan-700 border-solid border bg-cyan-950 max-w-2xl mx-auto rounded-md py-4 text:base md:text-lg px-4 mt-10 relative">
               Includes{" "}
-              <span className="font-bold">custom Websocket metrics</span> using
-              the Edamame K6 extension written in Go
+              <span className="font-bold">custom WebSocket metrics</span> using
+              the Edamame k6 extension written in Go
               <img
                 src="/img/gopher.png"
                 className="absolute top-3 -right-[4%] animate-wiggle"
@@ -347,7 +347,7 @@ export default function Home() {
                   <a href="https://www.linkedin.com/in/rachel-west-9a7349113/">
                     <img src="/img/linkedin.svg" />
                   </a>
-                  <a href="http://westrachel.com">
+                  <a href="https://westrachel.com">
                     <img
                       src="/img/globe.svg"
                       className="hover:stroke-primary"

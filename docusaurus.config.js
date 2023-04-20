@@ -100,7 +100,7 @@ const config = {
             position: "right",
           },
           {
-            href: "https://edamame-load-test.github.io",
+            href: "https://github.com/edamame-load-test",
             label: "GitHub",
             position: "right",
           },

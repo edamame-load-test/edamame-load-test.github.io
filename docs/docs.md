@@ -250,40 +250,16 @@ $ edamame dashboard --start
 [12:01:02:671] ✔ Your dashboard is now running at http://localhost:3001
 ```
 
-From within the GUI, a user can upload a k6 test script, start a load test, view and delete information about existing load tests, and delete all existing AWS infrastructure and data.
+From within the GUI, a user can upload a k6 test script, start a load test, view and delete information about existing load tests, access Grafana to visualize load test metrics, and delete all existing AWS infrastructure and data.
 
-### Launch Test
+import Dashboard from '../static/img/react-dashboard.png';
 
-<div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="200" height="200"/>
-  <p> 🖼️Placeholder: Figure 1.0 launching a test from within the GUI</p>
-</div>
-
-<div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="200" height="200"/>
-  <p> 🖼️Placeholder: Figure 1.1 running a test from withing the GUI (can show video of timer elapsing + edamame pods seesawing)</p>
-</div>
-
-### View Tests
-
-<div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="200" height="200"/>
-  <p> 🖼️Placeholder: Figure 1.2 viewing information about test(s) from the GUI - do we want multiple images here - one of the main page to show image of all tests listed in the table and one that shows the view where someone can look at the test script contents of a specific test? </p>
-</div>
-
-### Delete Test
-
-<div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="200" height="200"/>
-  <p> 🖼️Placeholder: Figure 1.3 deleting an individual test from within the GUI </p>
-</div>
-
-### Delete All Test Data and AWS Infrastructure
-
-<div class="text--center" >
-  <img src={Placeholder} alt="Example banner" width="200" height="200"/>
-  <p> 🖼️Placeholder: Figure 1.4 deleting a cluster from the GUI </p>
-</div>
+<figure>
+  <img src={Dashboard} alt="Image of Edamame's React graphical user interface"/>
+  <figcaption align = "center" >
+    Figure 1.0: Edamame's React GUI
+  </figcaption>
+</figure>
 
 ### Terminate Access
 
