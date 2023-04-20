@@ -4,11 +4,14 @@
  * work well for content-centric websites.
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Arimo&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
+@import url("https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap");
 /* You can override the default Infima variables here. */
 :root {
-  --ifm-font-family-base: 'Arimo', sans-serif;
+  --ifm-font-family-base: "inter", sans-serif;
   --ifm-color-primary-lightest: #1a5b69;
   --ifm-color-primary-lighter: #17515d;
   --ifm-color-primary-light: #164d59;
@@ -18,10 +21,13 @@
   --ifm-color-primary-darkest: #0e3139;
   --ifm-code-font-size: 95%;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+  --ifm-navbar-background-color: #1f2937;
+  --ifm-navbar-link-color: #ffffff;
+  --ifm-navbar-link-hover-color: #1fcbea;
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */
-[data-theme='dark'] {
+[data-theme="dark"] {
   --ifm-color-primary: #25c2a0;
   --ifm-color-primary-dark: #21af90;
   --ifm-color-primary-darker: #1fa588;
@@ -30,4 +36,176 @@
   --ifm-color-primary-lighter: #32d8b4;
   --ifm-color-primary-lightest: #4fddbf;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
+
+.markdown {
+  max-width: 900px;
+  margin: 0 auto;
+  font-family: inter;
+  font-size: 18px;
+  line-height: 32px;
+}
+
+/* Change the hamburger menu button color to white */
+.navbar__toggle {
+  color: white;
+}
+
+/* Change the hamburger menu button color to white on hover */
+.navbar__toggle:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Change the color of the navigation items on mobile to a slight off-white */
+.menu__link,
+.dropdown__link {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Change the color of the navigation items on mobile when hovered */
+.menu__link:hover,
+.dropdown__link:hover {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.footer__link-item:hover {
+  color: #1dc3e7;
+  text-decoration: none;
+}
+
+/* h1 {
+  font-weight: 600;
+  letter-spacing: -1px;
+}
+
+h2 {
+  font-family: inter;
+  font-weight: 600;
+  letter-spacing: -1px;
+}
+
+h2 {
+  font-family: inter;
+  font-weight: 600;
+  letter-spacing: -1px;
+  font-size: 32px;
+}
+
+h3 {
+  font-family: inter;
+  font-size: 24px;
+  letter-spacing: -0.5px;
+}
+
+h4 {
+  font-family: inter;
+  font-size: 18px;
+} */
+
+@keyframes wiggle {
+  0% {
+    transform: rotate(-5deg);
+  }
+  50% {
+    transform: rotate(5deg);
+  }
+  100% {
+    transform: rotate(-5deg);
+  }
+}
+
+.animate-wiggle {
+  animation: wiggle 1.5s ease-in-out infinite;
+}
+
+@keyframes move-cursor-1 {
+  0% {
+    transform: translate(-20px, -20px);
+  }
+  25% {
+    transform: translate(20px, -20px);
+  }
+  50% {
+    transform: translate(20px, 20px);
+  }
+  75% {
+    transform: translate(-20px, 20px);
+  }
+  100% {
+    transform: translate(-20px, -20px);
+  }
+}
+
+@keyframes move-cursor-2 {
+  0% {
+    transform: translate(-30px, -30px);
+  }
+  25% {
+    transform: translate(30px, -30px);
+  }
+  50% {
+    transform: translate(30px, 30px);
+  }
+  75% {
+    transform: translate(-30px, 30px);
+  }
+  100% {
+    transform: translate(-30px, -30px);
+  }
+}
+
+@keyframes move-cursor-3 {
+  0% {
+    transform: translate(20px, -20px);
+  }
+  25% {
+    transform: translate(-20px, -20px);
+  }
+  50% {
+    transform: translate(-20px, 20px);
+  }
+  75% {
+    transform: translate(20px, 20px);
+  }
+  100% {
+    transform: translate(20px, -20px);
+  }
+}
+
+@keyframes move-cursor-4 {
+  0% {
+    transform: translate(30px, 30px);
+  }
+  25% {
+    transform: translate(-30px, 30px);
+  }
+  50% {
+    transform: translate(-30px, -30px);
+  }
+  75% {
+    transform: translate(30px, -30px);
+  }
+  100% {
+    transform: translate(30px, 30px);
+  }
+}
+
+.animate-cursor-1 {
+  animation: move-cursor-1 6s linear infinite;
+}
+
+.animate-cursor-2 {
+  animation: move-cursor-2 5s linear infinite;
+}
+
+.animate-cursor-3 {
+  animation: move-cursor-3 7s linear infinite;
+}
+
+.animate-cursor-4 {
+  animation: move-cursor-4 4s linear infinite;
+}
+
+.svg {
+  display: block;
 }
