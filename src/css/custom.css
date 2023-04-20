@@ -46,6 +46,33 @@
   line-height: 32px;
 }
 
+/* Change the hamburger menu button color to white */
+.navbar__toggle {
+  color: white;
+}
+
+/* Change the hamburger menu button color to white on hover */
+.navbar__toggle:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Change the color of the navigation items on mobile to a slight off-white */
+.menu__link,
+.dropdown__link {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Change the color of the navigation items on mobile when hovered */
+.menu__link:hover,
+.dropdown__link:hover {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.footer__link-item:hover {
+  color: #1dc3e7;
+  text-decoration: none;
+}
+
 /* h1 {
   font-weight: 600;
   letter-spacing: -1px;

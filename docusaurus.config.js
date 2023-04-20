@@ -100,7 +100,7 @@ const config = {
             position: "right",
           },
           {
-            href: "https://github.com/facebook/docusaurus",
+            href: "https://edamame-load-test.github.io",
             label: "GitHub",
             position: "right",
           },
@@ -126,7 +126,7 @@ const config = {
               },
               {
                 label: "Live Presentation",
-                href: "https://www.youtube.com/watch?v=VZun0GQaSLY",
+                href: "https://youtu.be/JNPoYgS471w",
               },
             ],
           },
