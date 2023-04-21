@@ -64,7 +64,7 @@ export default function Home() {
                 className="border border-solid border-gray-400 px-4 text-base sm:text-lg py-3 rounded-full gap-2 text-white hover:no-underline hover:text-white hover:border-gray-300 transition"
               >
                 <img src="/img/play-button.svg" />
-                Watch Tech Talk
+                <span className="ml-2">Watch Tech Talk</span>
               </a>
               <a
                 href="/case-study"
@@ -144,7 +144,7 @@ export default function Home() {
                   href="/case-study"
                   className="text-white font-normal px-5 text-lg py-3 rounded-full bg-[#109BD1] antialiased inline-block mt-6 hover:no-underline hover:text-white hover:bg-primaryLight transition"
                 >
-                  Read case study
+                  Read Case Study
                 </a>
               </div>
             </div>
@@ -175,7 +175,7 @@ export default function Home() {
                   href="/case-study"
                   className="text-white font-normal px-5 text-lg py-3 rounded-full bg-primary hover:bg-primaryLight transition inline-block mt-6 hover:no-underline hover:text-white md:mt-2"
                 >
-                  Read case study
+                  Read Case Study
                 </a>
               </div>
               <img
@@ -201,7 +201,7 @@ export default function Home() {
                   href="/docs"
                   className="text-white font-normal px-5 text-lg py-3 rounded-full bg-primary inline-block antialiased mt-0 hover:no-underline hover:text-white hover:bg-primaryLight transition"
                 >
-                  Read the docs
+                  Read Docs
                 </Link>
               </div>
               <img src="/img/react-dashboard.png" className="mt-6 w-[100%]" />
