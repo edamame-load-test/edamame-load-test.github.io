@@ -319,7 +319,7 @@ export default function Home() {
                   <img src="/img/ginni.png" />
                 </div>
                 <p className="text-gray-800 text-lg font-semibold text-left mt-2 mb-0">
-                  Ginni Pinkert
+                  Ginni Pinckert
                 </p>
                 <p className="text-gray-600 text-left mb-1">Los Angeles, USA</p>
                 <div className="flex gap-2">
