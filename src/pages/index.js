@@ -326,7 +326,7 @@ export default function Home() {
                   <a href="https://www.linkedin.com/in/ginni-pinckert-a20363102/">
                     <img src="/img/linkedin.svg" />
                   </a>
-                  <a href="http://ginnipinckert.com">
+                  <a href="https://gcpinckert.com">
                     <img src="/img/globe.svg" />
                   </a>
                 </div>
