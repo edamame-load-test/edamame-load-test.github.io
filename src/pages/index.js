@@ -58,7 +58,7 @@ export default function Home() {
                 </div>
               </span>{" "}
             </p>
-            <div className="flex gap-2 justify-center mt-8">
+            <div className="flex gap-3 justify-center mt-8">
               <a
                 href="https://youtu.be/JNPoYgS471w"
                 className="border border-solid border-gray-400 px-4 text-base sm:text-lg py-3 rounded-full flex gap-2 text-white hover:no-underline hover:text-white hover:border-gray-300 transition"
