@@ -125,7 +125,7 @@ const config = {
                 href: "/Docs",
               },
               {
-                label: "Live Presentation",
+                label: "Tech Talk",
                 href: "https://youtu.be/JNPoYgS471w",
               },
             ],

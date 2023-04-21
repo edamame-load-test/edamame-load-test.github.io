@@ -215,7 +215,7 @@ import Fanout from './assets/Fanout.gif';
 
 <div class="text--center" >
   <img src={Fanout} alt="Gif demonstrating fanout"/>
-  <p>Figure 3.2 Depiction of fan-out</p>
+  <figcaption>Figure 3.2 Depiction of fan-out</figcaption>
 </div>
 
 <!-- markdownlint-disable MD024 -->
@@ -380,8 +380,6 @@ import CloudOptions from './assets/cloudOptions.png';
     Figure 5.3: Comparison of cloud-based solutions
   </figcaption>
 </figure>
-
-[^16]
 
 Another issue is that cloud-based solutions are not very flexible. For example, the k6 open-source load tester is quite extensible, which allows developers to customize which metrics their load tests are tracking by default. However, the k6 cloud platform does not support utilizing these extensions,[^17] which compromises developer experience.
 
