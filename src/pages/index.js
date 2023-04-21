@@ -319,14 +319,14 @@ export default function Home() {
                   <img src="/img/ginni.png" />
                 </div>
                 <p className="text-gray-800 text-lg font-semibold text-left mt-2 mb-0">
-                  Ginni Pinkert
+                  Ginni Pinckert
                 </p>
                 <p className="text-gray-600 text-left mb-1">Los Angeles, USA</p>
                 <div className="flex gap-2">
                   <a href="https://www.linkedin.com/in/ginni-pinckert-a20363102/">
                     <img src="/img/linkedin.svg" />
                   </a>
-                  <a href="http://ginnipinckert.com">
+                  <a href="https://gcpinckert.com">
                     <img src="/img/globe.svg" />
                   </a>
                 </div>
