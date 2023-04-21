@@ -23,11 +23,11 @@ export default function Home() {
               src="/img/rachel-cursor.svg"
             />
             <img
-              className="hidden md:block absolute lg:right-[12%] lg:bottom-[20%]  2xl:right-[20%] animate-cursor-3"
+              className="hidden md:block absolute   right-[12%] lg:top-[20%]  2xl:right-[20%] animate-cursor-3"
               src="/img/luke-cursor.svg"
             />
             <img
-              className="absolute right-[6%] lg:right-[15%] 2xl:right-[35%] 2xl:bottom-[10%] animate-cursor-4"
+              className="absolute right-[6%] md:bottom-[15%] lg:right-[15%] 2xl:right-[35%] 2xl:bottom-[20%] animate-cursor-4"
               src="/img/ginni-cursor.svg"
             />
             <h1 className="leading-[48px] mb-2 text-white font-epilogue text-4xl md:text-5xl tracking-tighter font-medium max-w-3xl mx-auto text-center md:leading-tight">
@@ -194,7 +194,8 @@ export default function Home() {
                 </h1>
                 <p className="text-xl text-gray-600 mt-2 leading-relaxed">
                   Our React-based GUI allows you to start a test, open Grafana
-                  dashboards to visualize test metrics, and optionally end tests early.
+                  dashboards to visualize test metrics, and optionally end tests
+                  early.
                 </p>
                 <Link
                   href="/docs"
