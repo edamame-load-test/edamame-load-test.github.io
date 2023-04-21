@@ -61,16 +61,16 @@ export default function Home() {
             <div className="flex gap-2 justify-center mt-8">
               <a
                 href="https://youtu.be/JNPoYgS471w"
-                className="border border-solid border-gray-400 px-4 text-base sm:text-lg py-3 rounded-full flex gap-2 text-white hover:no-underline hover:text-white hover:border-gray-300 transition"
+                className="border border-solid border-gray-400 px-4 text-base sm:text-lg py-3 rounded-full gap-2 text-white hover:no-underline hover:text-white hover:border-gray-300 transition"
               >
                 <img src="/img/play-button.svg" />
-                Watch Video
+                View Tech Talk
               </a>
               <a
                 href="/case-study"
                 className="px-5 text-base sm:text-lg py-3 rounded-full bg-primary hover:bg-primaryLight transition antialiased text-white hover:no-underline hover:text-white"
               >
-                Read case study
+                Read Case Study
               </a>
             </div>
           </div>
