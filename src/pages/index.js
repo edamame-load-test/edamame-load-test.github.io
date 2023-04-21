@@ -39,32 +39,32 @@ export default function Home() {
               <span>
                 <span className="text-cyan-300">100K+ virtual users</span> on
                 your own AWS infrastructure
-                <div className="hidden md:block">
-                  <svg
-                    class="svg relative left-48 text-left"
-                    width="183"
-                    height="21"
-                    viewBox="0 0 183 21"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M2 2C2 2 173.648 2 178.591 2C183.534 2 80.2386 12 74.2727 12.4348C68.3068 12.8696 176.375 19.2826 181.489 19.2826"
-                      stroke="#5FE6F9"
-                      stroke-width="3"
-                      stroke-linecap="round"
-                    />
-                  </svg>
-                </div>
+                <svg
+                  class="hidden md:block svg relative left-48 text-left"
+                  width="183"
+                  height="21"
+                  viewBox="0 0 183 21"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                <path
+                  class="hidden md:block"
+                  id="underlined"
+                  d="M2 2C2 2 173.648 2 178.591 2C183.534 2 80.2386 12 74.2727 12.4348C68.3068 12.8696 176.375 19.2826 181.489 19.2826"
+                  stroke="#5FE6F9"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                />
+                </svg>
               </span>{" "}
             </p>
-            <div className="flex gap-2 justify-center mt-8">
+            <div className="flex gap-2 justify-center mt-8 w-full">
               <a
                 href="https://youtu.be/JNPoYgS471w"
                 className="border border-solid border-gray-400 px-4 text-base sm:text-lg py-3 rounded-full gap-2 text-white hover:no-underline hover:text-white hover:border-gray-300 transition"
               >
                 <img src="/img/play-button.svg" />
-                View Tech Talk
+                Watch Tech Talk
               </a>
               <a
                 href="/case-study"
