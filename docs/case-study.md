@@ -4,7 +4,7 @@
 
 Edamame is an open-source, distributed load testing framework, optimized for real-time collaboration apps that use both HTTP and WebSockets. It comes with a CLI and React GUI that enables developers to easily self-host cloud-based architecture on AWS. Edamame supports tests of up to 200k virtual users, visualizes data in near real-time, and includes a stop functionality allowing developers to end their tests early.
 
-Creating a load-tester with these features comes with a unique set of challenges:
+Creating a load tester with these features comes with a unique set of challenges:
 
 - **Coordinating distributed tests**: The scale of Edamame load tests necessitated expanding into a distributed architecture while ensuring that the load tests remained synchronized.
 - **Processing 1M+ data points/second (in near real time)**: Large load tests on Edamame can generate 1M+ metrics per second, all of which need to be processed and displayed in near real time.
@@ -305,7 +305,7 @@ Often, staging environments are used to mirror production environments. This pro
 
 Running load tests against production comes with a variety of risks. The additional load might cause performance of the application to degrade for real end-users. For example, the application could become unresponsive, unreliable, or even crash. In the worst case scenario, running load tests against production can put stress on the underlying database, resulting in data loss or corruption.
 
-A near real-time load-testing dashboard allows developers to monitor load test results to ensure that they’re not degrading end-user experience on their production application, and allows them to stop the test entirely if the production server starts to get overwhelmed.
+A near real-time load testing dashboard allows developers to monitor load test results to ensure that they’re not degrading end-user experience on their production application, and allows them to stop the test entirely if the production server starts to get overwhelmed.
 
 To facilitate this near real-time visualization of data, the load testing tool should perform stream processing rather than batch processing. Batch processing presupposes the data has a defined start and finish, meaning that batch processing delivers results like end-of-test summaries.[^12] This does not allow developers to act upon results while the load test is running.
 
@@ -686,12 +686,12 @@ import GoExtension from './assets/goExtension.png';
 Edamame configures a default custom-dashboard for users that features these additional metrics. The dashboard is specifically designed to show WebSocket metrics in conjunction with HTTP. Since Grafana dashboards are defined using SQL queries, the user can easily customize the default dashboard or create dashboards of their own.
 
 <div class="text--center" >
-  <img 
-    src="https://user-images.githubusercontent.com/76174119/228081027-62238425-b004-482c-b3c7-a11c97411b50.png" alt="Example banner" 
+  <img
+    src="https://user-images.githubusercontent.com/76174119/228081027-62238425-b004-482c-b3c7-a11c97411b50.png" alt="Example banner"
     width="700"
   />
-  <img 
-    src="https://user-images.githubusercontent.com/76174119/228081016-e669dc4d-d1ce-4483-8924-b72ab8c3d1cb.png" alt="Example banner" 
+  <img
+    src="https://user-images.githubusercontent.com/76174119/228081016-e669dc4d-d1ce-4483-8924-b72ab8c3d1cb.png" alt="Example banner"
     width="700"
   />
   <p>Figure 9.4: Edamame's custom Grafana dashboard for viewing HTTP and WebSocket metrics</p>
