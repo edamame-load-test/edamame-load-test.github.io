@@ -124,7 +124,7 @@ export default function Home() {
                 </h1>
                 <p className="text-xl text-gray-600 mt-2 leading-relaxed">
                   Define your load tests in JavaScript using k6, and run
-                  distributed tests powered by the k6 Kubernetes operator.{" "}
+                  distributed tests using the k6 Kubernetes operator.{" "}
                 </p>
                 <img
                   src="/img/test-script.svg"
