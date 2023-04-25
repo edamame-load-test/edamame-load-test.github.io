@@ -190,10 +190,10 @@ export default function Home() {
               <div className="max-w-3xl mx-auto">
                 <img className="mx-auto" src="/img/react-icon.svg" />
                 <h1 className="text-4xl md:text-[44px] tracking-tight leading-tight md:leading-[52px] mt-2 font-medium">
-                  Use the CLI or GUI to manage your tests
+                  Use the CLI or React UI to manage your tests
                 </h1>
                 <p className="text-xl text-gray-600 mt-2 leading-relaxed">
-                  Our React-based GUI allows you to start a test, open Grafana
+                  Our React-based UI allows you to start a test, open Grafana
                   dashboards to visualize test metrics, and optionally end tests
                   early.
                 </p>

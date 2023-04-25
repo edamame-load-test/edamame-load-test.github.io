@@ -229,13 +229,13 @@ Terminal Output:
 [05:53:20:548] ✔ Deleted Edamame Cluster
 ```
 
-## GUI
+## React UI
 
 ### Establish Access
 
 import Placeholder from './assets/logo-light-green.png';
 
-If a user prefers to work in a graphical user interface (GUI) rather than a command line interface, they can initialize a GUI by executing the command `edamame dashboard --start` after they have successfully finished executing the command `edamame init`. This command will also configure secure local access to the Grafana dashboard.
+If a user prefers to work in a web application user interface rather than a command line interface, they can initialize a React UI by executing the command `edamame dashboard --start` after they have successfully finished executing the command `edamame init`. This command will also configure secure local access to the Grafana dashboard.
 
 Terminal Output:
 
@@ -250,20 +250,20 @@ $ edamame dashboard --start
 [12:01:02:671] ✔ Your dashboard is now running at http://localhost:3001
 ```
 
-From within the GUI, a user can upload a k6 test script, start a load test, view and delete information about existing load tests, access Grafana to visualize load test metrics, and delete all existing AWS infrastructure and data.
+From within the React UI, a user can upload a k6 test script, start a load test, view and delete information about existing load tests, access Grafana to visualize load test metrics, and delete all existing AWS infrastructure and data.
 
 import Dashboard from '../static/img/react-dashboard.png';
 
 <figure>
   <img src={Dashboard} alt="Image of Edamame's React graphical user interface"/>
   <figcaption align = "center" >
-    Figure 1.0: Edamame's React GUI
+    Figure 1.0: Edamame's React UI
   </figcaption>
 </figure>
 
 ### Terminate Access
 
-Once a user has finished using the GUI, they can end the local access to both the GUI and the Grafana dashboard by executing the command `edamame dashboard --stop`. This command will free up ports 3000 and 3001 for other processes.
+Once a user has finished using the React UI, they can end the local access to both the React UI and the Grafana dashboard by executing the command `edamame dashboard --stop`. This command will free up ports 3000 and 3001 for other processes.
 
 Terminal Output:
 
