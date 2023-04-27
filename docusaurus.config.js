@@ -109,9 +109,9 @@ const config = {
       footer: {
         style: "dark",
         logo: {
-          alt: 'Edamame Logo',
-          src: 'img/footer-logo.svg',
-          width: 150,
+          alt: "Edamame Logo",
+          src: "img/footer-logo.svg",
+          width: 80,
         },
         links: [
           {
