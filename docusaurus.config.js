@@ -9,7 +9,7 @@ const pathBrowserify = require("path-browserify");
 const config = {
   title: "Edamame",
   tagline: "A load generator for HTTP and WS",
-  favicon: "img/favicon.ico",
+  favicon: "img/favicon.png",
 
   // Set the production url of your site here
   url: "https://edamame-load-test.github.io",
@@ -108,11 +108,12 @@ const config = {
       },
       footer: {
         style: "dark",
+        logo: {
+          alt: 'Edamame Logo',
+          src: 'img/footer-logo.svg',
+          width: 150,
+        },
         links: [
-          {
-            title: "Edamame",
-            items: [],
-          },
           {
             title: "Navigation",
             items: [
@@ -122,11 +123,7 @@ const config = {
               },
               {
                 label: "Documentation",
-                href: "/Docs",
-              },
-              {
-                label: "Tech Talk",
-                href: "https://youtu.be/JNPoYgS471w",
+                href: "/docs",
               },
             ],
           },
@@ -135,12 +132,16 @@ const config = {
             items: [
               {
                 label: "GitHub",
-                href: "https://github.com/edamame-load-test/edamame",
+                href: "https://github.com/edamame-load-test",
+              },
+              {
+                label: "Tech Talk",
+                href: "https://youtu.be/JNPoYgS471w",
               },
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} Edamame Load Testing`,
+        copyright: `Copyright © ${new Date().getFullYear()} Edamame`,
       },
       prism: {
         theme: lightCodeTheme,
