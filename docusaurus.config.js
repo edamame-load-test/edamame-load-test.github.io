@@ -81,14 +81,6 @@ const config = {
       navbar: {
         hideOnScroll: true,
         title: "Edamame",
-        logo: {
-          alt: 'Site Logo',
-          src: 'img/navbar-logo.svg',
-          target: '_self',
-          width: 32,
-          height: 32,
-          className: 'custom-navbar-logo-class',
-        },
         items: [
           {
             type: "doc",
