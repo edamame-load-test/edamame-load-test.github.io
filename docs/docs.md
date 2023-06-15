@@ -34,7 +34,7 @@ Once all the dependencies from the prior section have been installed, a user sho
 
 ### edamame init
 
-Before conducting any load tests with Edamame, a user must first create and configure the necessary AWS infrastructure by executing the command `edamame init`. The most time-consuming part of this process is the provisioning of an EKS Cluster, which can take up to approximately 20 minutes. The terminal will provide status updates to the user throughout this installation and configuration process.
+Before conducting any load tests with Edamame, a user must first create and configure the necessary AWS infrastructure by executing the command `edamame init`. If a user wants to specify certain availability zones to use within their cluster instead of all of the default zones within their configured AWS region, they can pass a list of desired zones to the command using the --zones flag like so: `edamame init --zones us-west-2a,us-west-2b`. The most time-consuming part of this process is the provisioning of an EKS Cluster, which can take up to approximately 20 minutes. The terminal will provide status updates to the user throughout this installation and configuration process.
 
 > **Note:**
 > Edamame init provisions AWS infrastructure on a user's AWS account.
