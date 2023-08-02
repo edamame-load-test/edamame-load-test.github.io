@@ -699,7 +699,7 @@ Edamame configures a default custom-dashboard for users that features these addi
 
 ## Future plans
 
-Edamame provides a robust framework for performing distributed load tests that target both HTTP and WebSockets. It supports tests of up to 200k virtual users, sufficiently tests complex systems with multiple protocols, and uses a performant data pipeline to aggregate and visualize data in near real-time. That being said, there are several improvements and additional features that could be added in the future.
+Edamame provides a robust framework for performing distributed load tests that target both HTTP and WebSockets. It supports tests of up to 200k virtual users, sufficiently tests complex systems with multiple protocols, and uses a performant data pipeline to aggregate and visualize data in near real-time. That being said, there are improvements and additional features that could be added in the future.
 
 ### Improving scalability
 
@@ -728,14 +728,6 @@ That being said, aggregating data at each load generator involves sharing comput
 Edamame specifies a default of 20k virtual users per load generator, but also provides the ability to set a custom number for this value. This leads to the following question: how does the user understand whether or not they are overloading load generator hosts? To provide users with better insight into load test performance, Edamame can increase observability. Currently, visibility into the health of load generators can be ascertained by installing a Kubernetes Dashboard.[^32]
 
 Rather than relying on additional third-party resources, in the future Edamame should provide metrics like CPU consumption, RAM consumption, and bandwidth for load generators. This would allow the user to tailor how load generating infrastructure is set up in a way that's more specific to the tests they are running.
-
-### Data import and export
-
-Edamame provides users with an `edamame teardown` command which deletes all associated AWS resources, including historical data. This means that data is not persisted beyond the lifecycle of the EKS cluster that supports Edamame’s architecture. We'd like to give users a way to export data when removing AWS resources, to decrease vendor lock-in.
-
-As Edamame contains a separate backend API for the database in the form of an Express app, components are already in place to provide this service. To perform the export, one approach would be to create an SQL file representing all the data in the database, which could be downloaded to the user's local system. This file could then be used to load the data into another database of the user's choosing.
-
-This approach would also enable Edamame to check for the presence of such a file during the initialization process, and use it to populate the database with the previous cluster's data. This would ensure that data is persisted across cluster lifecycles, should the user ever need to take down their EKS infrastructure for any reason.
 
 ## Resources
 
