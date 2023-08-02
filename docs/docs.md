@@ -215,6 +215,14 @@ Terminal Output:
 [05:53:20:548] ✔ Deleted the test named: '40k VUs'...
 ```
 
+### edamame archive
+
+If a user wants or needs to temporarily teardown their Edamame cluster, they can persist all their historical load test data beyond the life of their AWS EKS Cluster by executing `edamame archive --all`. This command uploads data associated with each individual test as compressed file objects with the storage class Standard Infrequent Access into an AWS S3 Bucket. If a user wants to archive only the data associated with one historical test, then they can execute `edamame archive --name testName` and replace testName with the name of the test that they would like to archive. The files are archived as objects with Standard Infrequent Access, because this tier provides quick retrieval access and cheap storage relative to some of the other AWS storage class categories. Edamame currently doesn't offer the flexibility to change the storage class of these file uploads via the CLI. However, if a user plans to have this archived data in cold storage for a long time and wants a cheaper storage class option, then they can use Amazon S3 Lifecycle to update the storage class to one of the Glacier categories.
+
+### edamame delete-from-archive
+
+If a user decides they no longer need the data associated with all or one of their historical load tests that currently exists as an object in their AWS S3 Bucket, then they can execute `edamame delete-from-archive --all` or `edamame delete-from-archive --name testName` to delete all the load test data stored in AWS S3 or the data associated with one historical load test.
+
 ### edamame teardown
 
 If a user no longer wants or needs to run load tests and has no desire to retain any existing load test data, they can delete all existing load test data and AWS infrastructure by executing the command `edamame teardown`.
