@@ -217,7 +217,21 @@ Terminal Output:
 
 ### edamame archive
 
-If a user wants or needs to temporarily teardown their Edamame cluster, they can persist all their historical load test data beyond the life of their AWS EKS Cluster by executing `edamame archive --all`. This command uploads data associated with each individual test as compressed file objects with the storage class Standard Infrequent Access into an AWS S3 Bucket. If a user wants to archive only the data associated with one historical test, then they can execute `edamame archive --name testName` and replace testName with the name of the test that they would like to archive. The files are archived as objects with Standard Infrequent Access, because this tier provides quick retrieval access and cheap storage relative to some of the other AWS storage class categories. Edamame currently doesn't offer the flexibility to change the storage class of these file uploads via the CLI. However, if a user plans to have this archived data in cold storage for a long time and wants a cheaper storage class option, then they can use Amazon S3 Lifecycle to update the storage class to one of the Glacier categories.
+If a user wants or needs to temporarily teardown their Edamame cluster, they can persist all their historical load test data beyond the life of their AWS EKS Cluster by executing `edamame archive --all` prior to executing `edamame teardown`. This command uploads data associated with each individual test as compressed file objects with the Standard storage class into an AWS S3 Bucket. If a user wants to archive only the data associated with one historical test, then they can execute `edamame archive --name testName` and replace testName with the name of the test that they would like to archive. Optionally, a user can execute this command with the `--storage` flag, passing in one of the valid storage class options:
+
+- STANDARD (Standard)
+- REDUCED_REDUNDANCY (Reduced Redundancy)
+- STANDARD_IA (Standard Infrequent Access)
+- ONEZONE_IA (One Zone Infrequent Access)
+- INTELLIGENT_TIERING (Standard Intelligent-Tiering)
+- GLACIER (Glacier Flexible Retrieval)
+- DEEP_ARCHIVE (Glacier Deep Archive)
+- GLACIER_IR (Glacier Instant Retrieval)
+
+The available storage options have different associated fees & availability SLAs. Some of the classes also have retrieval charges and minimum storage duration charges. A user can read more about the options below in order to select the right class for their storage needs.
+
+- https://aws.amazon.com/s3/storage-classes/
+- https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-class-intro.html
 
 Example:
 `edamame archive --name "100K VUs"`
@@ -226,11 +240,12 @@ Terminal Output:
 
 ```
 [04:08:56:294] ℹ Starting archive process...
-[04:08:56:544] ℹ Creating edamame-load-tests AWS S3 Bucket located at: aws-region={your region}
+[04:08:56:297] ℹ No S3 storage class has been specified, so the default STANDARD S3 storage class will be used.
+[04:08:56:544] ℹ Creating load test AWS S3 Bucket located in: aws-region=us-west-2
  if it doesn't exist yet...
 [04:09:01:715] ℹ AWS S3 Bucket is ready for uploads.
 [04:09:03:366] ℹ Successfully archived 100K VUs.
-[04:09:03:366] ✔ Archival process complete. Uploaded 1 load test objects to the AWS S3 Bucket: edamame-load-tests
+[04:09:03:366] ✔ Archive process complete.
 ```
 
 ### edamame delete-from-archive
@@ -244,7 +259,42 @@ Terminal Output:
 
 ```
 [04:17:18:812] ℹ Starting archival deletion process...
-[04:17:21:787] ✔ Successfully deleted 100K VUs from the AWS S3 Bucket: edamame-load-tests
+[04:17:21:787] ✔ Successfully deleted 100K VUs from your Edamame load test AWS S3 Bucket.
+```
+
+### edamame archive-contents
+
+A user can examine what test(s) they've already archived into their AWS S3 bucket by executing `edamame archive-contents`.
+
+Terminal Output:
+
+```
+[11:59:14:955] ℹ Loading AWS S3 Bucket archive details...
+[11:59:17:351] ✔ Your Edamame load test AWS S3 Bucket contains the following load test S3 objects:
+ > 100kVUs.tar.gz
+```
+
+### edamame import-from-archive
+
+If a user initializes a new Edamame cluster and wants to import historical load test data that they previously archived into AWS S3, they can execute `edamame import-from-archive --all` or `edamame import-from-archive --name testName` to import all or some of their historical load test data. Please note that if archived load test data overlaps with load test data in the current cluster (e.g. same test name), then the import process will be aborted. As a result, it's recommended that `edamame import-from-archive` be executed prior to running any load tests in the new Edamame cluster. Also, please note that load tests stored in S3 with the GLACIER or DEEP_ARCHIVE classes or with the class INTELLIGENT_TIERING and that has an archive status of deep_archive_access or archive_access will need to be restored before they can be imported. See `edamame restore` for more details.
+
+Terminal Output:
+
+```
+[02:29:28:602] ℹ Starting process to import AWS S3 archived data into Postgres database...
+[02:29:31:507] ℹ Successfully imported the test 100kVUs from your AWS S3 Bucket.
+[02:29:31:554] ✔ Completed importing data from AWS S3.
+```
+
+### edamame restore
+
+If a user wants to import load test data that's currently stored in S3 with the class DEEP_ARCHIVE, GLACIER, or INTELLIGENT_TIERING (and has an archive_access or deep_archive_access related archive status), a user must first restore the S3 object. This can be done by executing `edamame restore --name testName --days 10`. The number of days flag is required only if the S3 object has the GLACIER or DEEP_ARCHIVE storage class and should be an integer between 1 and 30. The S3 object will subsequently be restored to the STANDARD class for the specified number of days. During the restoration period, the user can subsequently import the load test data into their current Edamame cluster. If the S3 object has the INTELLIGENT_TIERING class, then the object will be restored to the Frequent Access tier after executing `edamame restore --name testName` (number of days flag is ignored in this case). Note that restoration isn't immediate and is a process completed by AWS. As a result, a user cannot immediately execute `edamame import-from-archive` after executing `edamame restore`.
+
+Terminal Output:
+
+```
+[02:25:18:043] ℹ Starting restoration of AWS S3 object...
+[02:25:19:060] ✔ AWS S3 restoration process is in progress. Once it's complete you can import data associated with testName into your current Edamame EKS cluster or move the S3 object elsewhere.
 ```
 
 ### edamame teardown
